@@ -8,6 +8,8 @@ public class Dash_script : MonoBehaviour
     [SerializeField] private Animator anim; //the animation of this object
     [SerializeField] private Rigidbody2D rigid2d; //the animation of this object
 
+
+
     public void Dash(Transform player_transform, Rigidbody2D player_rb)
     {
         rigid2d.rotation = Mathf.Rad2Deg * Mathf.Atan2(player_rb.velocity.y, player_rb.velocity.x);//rotates the dash toward the player
