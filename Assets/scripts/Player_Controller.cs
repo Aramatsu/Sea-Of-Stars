@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
 
@@ -182,6 +183,12 @@ public class Player_Controller : MonoBehaviour
         GameObject dash_clone = Instantiate(dash, Vector2.zero, Quaternion.identity);
         dash_clone.GetComponent<Dash_script>().Dash(transform, rigid2d);
     }
+    
+    //the method that defines the death of the player
+    public void Die()
+    {
+        SceneManager.LoadScene("Death_screen");
+    }
 
     //When colliding with something
     private void OnCollisionEnter2D(Collision2D collision)
@@ -190,8 +197,15 @@ public class Player_Controller : MonoBehaviour
         if (collision.gameObject.CompareTag("Red Dwarf"))
         {
             health -= 5;
-            Health_bar.value = health;
-            rigid2d.velocity = -1 * rigid2d.velocity; 
+            if (health > 0)
+            {
+                Health_bar.value = health;
+                rigid2d.velocity = -1 * rigid2d.velocity;
+            }
+            else
+            {
+                Die();
+            }
         }
         //and it is a mana crystal
         else if (collision.gameObject.CompareTag("Mana"))
@@ -210,7 +224,6 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
+
+
 }
-
-
-// just making sure that github works

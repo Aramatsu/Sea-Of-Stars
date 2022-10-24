@@ -5,7 +5,7 @@ using UnityEngine;
 public class Red_Dwarf : MonoBehaviour
 {
     //assign variable at start
-    private Red_dwarf planet = new Red_dwarf();
+    public Red_dwarf planet = new Red_dwarf();
     [SerializeField]public Enemy.Star star;
     
 
