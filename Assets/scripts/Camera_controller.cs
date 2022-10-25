@@ -9,7 +9,7 @@ public class Camera_controller : MonoBehaviour
     private Vector3 Original_position; //vector 2 used for the camera shake func
     private float elapsed_time; //float used for the camera shake func
 
-    //
+    //bishees
     private void Awake()
     {
         shared_instance = this;
