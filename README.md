@@ -1,2 +1,2 @@
 # Sea-Of-Stars
-Axolotl game
+A game about an axolotl high asf on drugs.
