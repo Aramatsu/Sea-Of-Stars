@@ -97,9 +97,9 @@ public class Enemy
     }
 
     // function that moves the star toward the planet
-    public void MoveToPlanet(Vector2 r_pos, Vector2 p_pos, Rigidbody2D rb2D)
+    public void MoveToPlanet(Vector2 r_pos, Vector2 p_pos, Rigidbody2D rb2D, float speed)
     {
-        rb2D.AddForce((p_pos - r_pos) * star.speed, ForceMode2D.Force);
+        rb2D.AddForce((p_pos - r_pos) * speed, ForceMode2D.Force);
     }
     
     //the function that used to kill the star

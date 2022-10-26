@@ -13,13 +13,14 @@ public class Red_Dwarf : MonoBehaviour
     {
         Player_Controller.Onshot += planet.Shot;
         planet.star = star;
+        planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb, star.speed);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb);
+        planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb, star.speed);
     }
 
 }
