@@ -76,14 +76,11 @@ public class Player_Controller : MonoBehaviour
         horimove = Input.GetAxisRaw("Horizontal");
         vertmove = Input.GetAxisRaw("Vertical");
 
-
-        
-
         //movement code
         target_velocity = new Vector3(horimove, vertmove) * speed;
         rigid2d.velocity = Vector2.SmoothDamp(rigid2d.velocity, target_velocity, ref velocity, movement_damping);
 
-        
+
 
         //
         if (Input.GetMouseButton(1))
@@ -92,13 +89,12 @@ public class Player_Controller : MonoBehaviour
             {
                 if (super_timer <= Time.realtimeSinceStartup)
                 {
+
                     super_timer = Time.realtimeSinceStartup + 1f;
                     UpdateMana(-20);
-                    //change this to object pooling later
-                    GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - mousepos.y, transform.position.x - mousepos.x))));
-                    bullet_clone.SendMessage("SetDirection", new Vector2(transform.position.x, transform.position.y) - mousepos);
                     player_anim.SetTrigger("Shot_M2");
-                    StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
+                    AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
+                    Invoke("OnM2", hi.Length);
                 }
             }
 
@@ -227,10 +223,6 @@ public class Player_Controller : MonoBehaviour
                 UpdateMana(1);
 
             }
-            else
-            {
-                Debug.Log("Reached max mana");
-            }
             collision.gameObject.SetActive(false);
         }
     }
@@ -240,5 +232,15 @@ public class Player_Controller : MonoBehaviour
     {
         mana += amount;
         Mana_bar.value = mana;
+    }
+
+    //
+    private void OnM2()
+    {
+        //change this to object pooling later
+        GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - mousepos.y, transform.position.x - mousepos.x))));
+        rigid2d.AddForce(-mousepos.normalized * 20, ForceMode2D.Impulse);
+        bullet_clone.SendMessage("SetDirection", new Vector2(transform.position.x, transform.position.y) - mousepos);
+        StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
 }

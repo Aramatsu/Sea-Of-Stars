@@ -7,6 +7,11 @@ public class Object_script : MonoBehaviour
     private Transform player_transform;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float speed;
+    [SerializeField] private float movement_damping; //how much the movement should smooth out   
+
+
+    private Vector2 velocity = Vector2.zero;
+    private Vector2 target_velocity;
 
     //start func woohoo
     private void Start()
@@ -17,7 +22,8 @@ public class Object_script : MonoBehaviour
     //
     private void Update()
     {
-        rb.velocity = ((player_transform.position - transform.position) * speed);
+        target_velocity = -(transform.position - player_transform.position) * speed;
+        rb.velocity = Vector2.SmoothDamp(rb.velocity, target_velocity, ref velocity, movement_damping);
     }
 
 
