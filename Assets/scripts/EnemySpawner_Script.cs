@@ -55,7 +55,6 @@ public class Enemy
         public Animator anim;// the anim of the star
         public float health; //the enemies health
         public float speed; // their speed
-        public float defense; //the amount of damage they take when hit
         public float damage; // the amount of damage they deal to the player 
         public int Mana; // the amount of mana given when killed 
         public Rigidbody2D rb; // the rigidbody of the star
@@ -67,17 +66,20 @@ public class Enemy
             this.anim = anim;
             this.health = health;
             this.speed = speed;
-            this.defense = defense;
             this.damage = damage;
             this.rb = rb;
-            this.Mana = mana;
+            Mana = mana;
 
         }
     }
     //function that hurts the star and does the coresponding other crap
-    public void Hurt(float damage)
+    public void Damage(float damage)
     {
         star.health -= damage;
+        if (star.health <= 0)
+        {
+            Die(star.Mana); // gio sucks
+        }
         star.anim.SetTrigger("Hurt");
     }
 
@@ -87,12 +89,7 @@ public class Enemy
 
         if (Mathf.Abs(shot_info.position.x - star.gameObject.transform.position.x) < 5 && Mathf.Abs(shot_info.position.y - star.gameObject.transform.position.y) < 5)
         {
-            if (star.health <= 0)
-            {
-                Die(star.Mana); // gio sucks
-            }
-            star.anim.SetTrigger("Hurt");
-            star.health -= weapon.Damage;
+            Damage(weapon.Damage);
         }
     }
 
@@ -111,6 +108,17 @@ public class Enemy
             Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position);
         }
         UnityEngine.Object.Destroy(star.gameObject);
+    }
+    
+    //
+    public void ontriggerenter(Collider2D collision)
+    {
+        switch (collision.tag)
+        {
+            case "Bullet2":
+                Damage(50);
+                break;
+        }
     }
 
 }

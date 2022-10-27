@@ -53,8 +53,7 @@ MonoBehaviour:
     gameObject: {fileID: 2114724565419403772}
     anim: {fileID: 7349904863621171963}
     health: 50
-    speed: 0.0025
-    defense: 25
+    speed: 0.001
     damage: 10
     Mana: 10
     rb: {fileID: 8109152380147689352}

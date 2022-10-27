@@ -16,7 +16,7 @@ public class Player_Controller : MonoBehaviour
         public float Damage;
         public string Name;
         public bool CanPierce;
-        public Weapon(float damage, string name, bool CanPierce)//weapon contructor
+        public Weapon(float damage, string name, bool CanPierce)//weapon constructor
         {
             this.Damage = damage;
             this.Name = name;
@@ -36,16 +36,15 @@ public class Player_Controller : MonoBehaviour
     [SerializeField] private float explosion_power; //power of explosion
     [SerializeField] private Animator player_anim; //the animator of the player
     [SerializeField] private float max_explosion_power; //the max amount of force you can apply on an object
-    [SerializeField] private GameObject test_cubes; //temp cubes
+    [SerializeField] private GameObject bullet; //Bullet
     [SerializeField] private Slider Health_bar; //the health bar the health is connected to
     [SerializeField] private Slider Mana_bar; //the mana bar the mana is connected to
-    [SerializeField] private Weapon Staff;//the staff weapon
     [SerializeField] private GameObject dash;//The dash gameobject
     [SerializeField] private GameObject gfx;//The gfx of the player gameobject
-    [SerializeField] private float camerashake_length;//the length of the camera shake
-    [SerializeField] private float camerashake_power;//how powerful the camera dhake is
+    [SerializeField] private Camera_controller cam_script;
 
     private float dash_timer;//The timer for the dash
+    private float super_timer;//The timer for the super attack
     private Vector2 velocity = Vector2.zero;
     private Vector2 mousepos;
     private Vector2 target_velocity;
@@ -53,6 +52,8 @@ public class Player_Controller : MonoBehaviour
     private float vertmove;
     private float health = 100;
     private float mana = 0;
+
+    private Weapon Staff = new Weapon(10, "Staff", false); //the staff weapon
 
     //awake function
     private void Awake()
@@ -64,6 +65,7 @@ public class Player_Controller : MonoBehaviour
     private void Start()
     {
         dash_timer = Time.realtimeSinceStartup + 0.3f;
+        super_timer = Time.realtimeSinceStartup + 1f;
     }
 
     // Update is called once per frame
@@ -83,10 +85,22 @@ public class Player_Controller : MonoBehaviour
 
         
 
-        //create new objects when pressing the right mouse button
+        //
         if (Input.GetMouseButton(1))
         {
-            GameObject square = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, mousepos);
+            if (mana >= 20)
+            {
+                if (super_timer <= Time.realtimeSinceStartup)
+                {
+                    super_timer = Time.realtimeSinceStartup + 1f;
+                    UpdateMana(-20);
+                    //change this to object pooling later
+                    GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - mousepos.y, transform.position.x - mousepos.x))));
+                    bullet_clone.SendMessage("SetDirection", new Vector2(transform.position.x, transform.position.y) - mousepos);
+                    player_anim.SetTrigger("Shot_M2");
+                    StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
+                }
+            }
 
         }
 
@@ -106,7 +120,7 @@ public class Player_Controller : MonoBehaviour
         }
 
         //Dash when tapping space
-        if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer < Time.realtimeSinceStartup|| Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer < Time.realtimeSinceStartup)
+        if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer <= Time.realtimeSinceStartup|| Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer <= Time.realtimeSinceStartup)
         {
             Dash();
             dash_timer = Time.realtimeSinceStartup + 0.3f;
@@ -130,6 +144,7 @@ public class Player_Controller : MonoBehaviour
                     if (hit)
                     {
                         Onshot?.Invoke(hit.transform, Staff);
+                        
 
                     }
                 }
@@ -146,8 +161,7 @@ public class Player_Controller : MonoBehaviour
                 }
             }
 
-            // regardless, make the camera shake
-            Camera_controller.shared_instance.StartCoroutine(Camera_controller.shared_instance.Camera_shake(camerashake_length, camerashake_power));
+            StartCoroutine(cam_script.Camera_shake(0.1f, 0.05f));
         }
 
         //set animator parameters
@@ -165,8 +179,6 @@ public class Player_Controller : MonoBehaviour
             gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 0));
 
         }
-
-        
     }
 
 
@@ -212,8 +224,7 @@ public class Player_Controller : MonoBehaviour
         {
             if (mana <= 100)
             {
-                mana += 1;
-                Mana_bar.value = mana;
+                UpdateMana(1);
 
             }
             else
@@ -224,6 +235,10 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-
-
+    //
+    private void UpdateMana(float amount)
+    {
+        mana += amount;
+        Mana_bar.value = mana;
+    }
 }

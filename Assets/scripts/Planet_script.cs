@@ -24,7 +24,7 @@ public class Planet_script : MonoBehaviour
                 DamagePlanet(10);
                 Player_Controller.Onshot -= collision.gameObject.GetComponent<Red_Dwarf>().planet.Shot;
                 Destroy(collision.gameObject);
-                Debug.Log("bishees worked");
+                StartCoroutine(Camera_controller.shared_instance.Camera_shake(1, 1));
                 break;
         }
         

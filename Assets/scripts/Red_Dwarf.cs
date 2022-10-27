@@ -23,5 +23,11 @@ public class Red_Dwarf : MonoBehaviour
         planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb, star.speed);
     }
 
+    //
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        planet.ontriggerenter(collision);
+    }
+
 }
 
