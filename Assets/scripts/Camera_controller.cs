@@ -18,6 +18,7 @@ public class Camera_controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         //if the player is pressing Q
         if (Input.GetKey(KeyCode.Q))
         {
@@ -34,13 +35,13 @@ public class Camera_controller : MonoBehaviour
     public IEnumerator Camera_shake(float duration, float magnitude)
     {
         //i
-        Original_position = transform.localPosition;
+        Original_position = transform.position;
         elapsed_time = 0f;
 
         while (elapsed_time <= duration)
         {
             //wanna
-            transform.localPosition = new Vector3(Random.Range(-magnitude, magnitude), Random.Range(-magnitude, magnitude), Original_position.z);
+            transform.position += new Vector3(Random.Range(-magnitude, magnitude), Random.Range(-magnitude, magnitude), Original_position.z);
 
             elapsed_time += Time.deltaTime;
 

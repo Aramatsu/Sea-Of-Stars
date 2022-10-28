@@ -80,7 +80,9 @@ public class Player_Controller : MonoBehaviour
         target_velocity = new Vector3(horimove, vertmove) * speed;
         rigid2d.velocity = Vector2.SmoothDamp(rigid2d.velocity, target_velocity, ref velocity, movement_damping);
 
-
+        //
+        cam.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+        cam.transform.position = new Vector3(Mathf.Clamp(cam.transform.position.x, -101.2f, 100), Mathf.Clamp(cam.transform.position.y, -14.3f, 123.2f), -10);
 
         //
         if (Input.GetMouseButton(1))
@@ -94,7 +96,7 @@ public class Player_Controller : MonoBehaviour
                     UpdateMana(-20);
                     player_anim.SetTrigger("Shot_M2");
                     AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-                    Invoke("OnM2", hi.Length);
+                    Invoke("OnM2", hi.Length - 0.1f);
                 }
             }
 
