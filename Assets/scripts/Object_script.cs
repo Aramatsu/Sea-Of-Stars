@@ -26,6 +26,10 @@ public class Object_script : MonoBehaviour
         rb.velocity = Vector2.SmoothDamp(rb.velocity, target_velocity, ref velocity, movement_damping);
     }
 
-
+    //method for adding a explosive force
+    public void Explode(Vector2 star_pos)
+    {
+        rb.AddForce((star_pos - new Vector2(transform.position.x, transform.position.y)).normalized * 0.25f);
+    }
 
 }

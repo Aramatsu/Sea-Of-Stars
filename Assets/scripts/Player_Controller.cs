@@ -10,17 +10,22 @@ public class Player_Controller : MonoBehaviour
     public delegate void Mydelegate(Transform transform, Weapon weapon);//the delegate that cotains all the methods for when the player shoots
     public static Mydelegate Onshot; 
 
+
     [Serializable]
     public struct Weapon // the struct containing all the data of each weapon
     {
         public float Damage;
+        public float Cooldown;
         public string Name;
         public bool CanPierce;
-        public Weapon(float damage, string name, bool CanPierce)//weapon constructor
+        public bool Repeatable;
+        public Weapon(float damage, string name, bool CanPierce, float cooldown, bool repeatable)//weapon constructor
         {
             this.Damage = damage;
             this.Name = name;
             this.CanPierce = CanPierce;
+            this.Cooldown = cooldown;
+            this.Repeatable = repeatable;
         }
     }
 
@@ -45,15 +50,19 @@ public class Player_Controller : MonoBehaviour
 
     private float dash_timer;//The timer for the dash
     private float super_timer;//The timer for the super attack
+    private float shooting_timer; //the timer for the normal attack
     private Vector2 velocity = Vector2.zero;
-    private Vector2 mousepos;
     private Vector2 target_velocity;
     private float horimove;
     private float vertmove;
     private float health = 100;
     private float mana = 0;
 
-    private Weapon Staff = new Weapon(10, "Staff", false); //the staff weapon
+    private Weapon Staff = new Weapon(10, "Staff", false, 1, false); //the staff weapon
+    private Weapon Machinegun = new Weapon(0.5f, "Machinegun", false, 0.5f, true); //the Machinegun weapon
+    private Weapon Sniper = new Weapon(20, "Sniper", true, 2, false); //the sniper weapon
+
+    private Weapon Current_weapon;
 
     //awake function
     private void Awake()
@@ -66,6 +75,7 @@ public class Player_Controller : MonoBehaviour
     {
         dash_timer = Time.realtimeSinceStartup + 0.3f;
         super_timer = Time.realtimeSinceStartup + 1f;
+        super_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;
     }
 
     // Update is called once per frame
@@ -80,11 +90,7 @@ public class Player_Controller : MonoBehaviour
         target_velocity = new Vector3(horimove, vertmove) * speed;
         rigid2d.velocity = Vector2.SmoothDamp(rigid2d.velocity, target_velocity, ref velocity, movement_damping);
 
-        //
-        cam.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
-        cam.transform.position = new Vector3(Mathf.Clamp(cam.transform.position.x, -101.2f, 100), Mathf.Clamp(cam.transform.position.y, -14.3f, 123.2f), -10);
-
-        //
+        //super attack
         if (Input.GetMouseButton(1))
         {
             if (mana >= 20)
@@ -96,10 +102,31 @@ public class Player_Controller : MonoBehaviour
                     UpdateMana(-20);
                     player_anim.SetTrigger("Shot_M2");
                     AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-                    Invoke("OnM2", hi.Length - 0.1f);
+                    Invoke("OnM2", hi.Length - 0.3f);
                 }
             }
 
+        }
+
+        //
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            switch (Current_weapon.Name)
+            {
+                case "Staff":
+                    Current_weapon = Machinegun;
+                    break;
+                case "Machinegun":
+                    Current_weapon = Sniper;
+                    break;
+                case "Sniper":
+                    Current_weapon = Staff;
+                    break;
+                default:
+                    Current_weapon = Staff;
+                    break;
+            }
+            Debug.Log(Current_weapon.Name);
         }
 
         //explode all objects within explosion radius when tapping e 
@@ -110,7 +137,8 @@ public class Player_Controller : MonoBehaviour
             exploded = Physics2D.OverlapCircleAll(transform.position, explode_radius, explodedable);
             for (int i = 0; i < exploded.Length; i++)
             {
-                exploded[i].attachedRigidbody.AddForce(Vector2.ClampMagnitude(V2_distance(exploded[i].transform.position, transform.position) * explosion_power, max_explosion_power)); 
+                exploded[i].attachedRigidbody.AddForce(Vector2.ClampMagnitude(V2_distance(exploded[i].transform.position, transform.position) * explosion_power, max_explosion_power));
+                Debug.Log(Vector2.ClampMagnitude(V2_distance(exploded[i].transform.position, transform.position) * explosion_power, max_explosion_power));
             }
 
 
@@ -125,37 +153,34 @@ public class Player_Controller : MonoBehaviour
             rigid2d.AddForce(new Vector3(horimove, vertmove) * dash_speed);
         }
 
-
-        //find mouse position in relation to world point
-        mousepos = cam.ScreenToWorldPoint(Input.mousePosition);
-
         //Shoot with mouse
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && shooting_timer <= Time.realtimeSinceStartup && !Current_weapon.Repeatable || Input.GetMouseButton(0) && Current_weapon.Repeatable)
         {
-            if(Staff.CanPierce == true)// if the current weapon has a can peirce on true...
+            
+            if(Current_weapon.CanPierce == true)// if the current weapon has a can peirce on true...
             {
                 //use raycastall instead of raycast 
-                RaycastHit2D[] hit_info = Physics2D.RaycastAll(transform.position, mousepos - rigid2d.position, Mathf.Infinity, explodedable);
+                RaycastHit2D[] hit_info = Physics2D.RaycastAll(transform.position, GetMousePos() - rigid2d.position, Mathf.Infinity, explodedable);
                 foreach (var hit in hit_info)
                 {
                     //if hit info is not equal to null, call the onshot delegate and pass the hit objects transform and th weapon struct
                     if (hit)
                     {
-                        Onshot?.Invoke(hit.transform, Staff);
+                        Onshot?.Invoke(hit.transform, Current_weapon);
                         
 
                     }
                 }
             } 
-            else if (Staff.CanPierce == false) //else if it is false...
+            else if (Current_weapon.CanPierce == false) //else if it is false...
             {
                 //use raycast 
-                RaycastHit2D hit_info = Physics2D.Raycast(transform.position, mousepos - rigid2d.position, Mathf.Infinity, explodedable);
+                RaycastHit2D hit_info = Physics2D.Raycast(transform.position, GetMousePos() - rigid2d.position, Mathf.Infinity, explodedable);
 
                 //if hit info is not equal to null, call the onshot delegate and pass the hit objects transform and th weapon struct
                 if (hit_info)
                 {
-                    Onshot?.Invoke(hit_info.transform, Staff);
+                    Onshot?.Invoke(hit_info.transform, Current_weapon);
                 }
             }
 
@@ -166,7 +191,7 @@ public class Player_Controller : MonoBehaviour
         player_anim.SetFloat("speed", MathF.Abs(horimove) + Mathf.Abs(vertmove));
 
         //if the horizontal input is positive...
-        if(horimove > 0)
+        if (horimove > 0)
         {
             //flip the player
             gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 180));
@@ -190,7 +215,7 @@ public class Player_Controller : MonoBehaviour
     //function to handle dashing
     public void Dash()
     {
-        GameObject dash_clone = Instantiate(dash, Vector2.zero, Quaternion.identity);
+        GameObject dash_clone = Instantiate(dash, new Vector2(1000, 1000), Quaternion.identity);
         dash_clone.GetComponent<Dash_script>().Dash(transform, rigid2d);
     }
     
@@ -217,7 +242,7 @@ public class Player_Controller : MonoBehaviour
                 Die();
             }
         }
-        //and it is a mana crystal
+        //if it is a mana crystal
         else if (collision.gameObject.CompareTag("Mana"))
         {
             if (mana <= 100)
@@ -240,9 +265,16 @@ public class Player_Controller : MonoBehaviour
     private void OnM2()
     {
         //change this to object pooling later
-        GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - mousepos.y, transform.position.x - mousepos.x))));
-        rigid2d.AddForce(-mousepos.normalized * 20, ForceMode2D.Impulse);
-        bullet_clone.SendMessage("SetDirection", new Vector2(transform.position.x, transform.position.y) - mousepos);
+        GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
+        rigid2d.AddForce(-GetMousePos().normalized * 20, ForceMode2D.Impulse);
+        bullet_clone.SendMessage("SetDirection", new Vector2(transform.position.x, transform.position.y) - GetMousePos());
         StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
+    }
+
+    //function to get the position of the mouse
+    private Vector2 GetMousePos()
+    {
+        //find mouse position in relation to world point
+        return cam.ScreenToWorldPoint(Input.mousePosition);
     }
 }

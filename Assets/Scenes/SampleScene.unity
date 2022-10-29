@@ -711,6 +711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam1: {fileID: 519420031}
+  Player_position: {fileID: 2027785213}
 --- !u!1 &750562309
 GameObject:
   m_ObjectHideFlags: 0
@@ -1677,6 +1678,13 @@ MonoBehaviour:
   - {fileID: 0}
   Number_Squares: 20
   Squares: {fileID: 910415207246227483, guid: 2d73264c1f2a6e04d833fe2604a84fff, type: 3}
+  Mana_sprites:
+  - {fileID: -1823631172, guid: 4839c2371ab8f24469d6a874730b1757, type: 3}
+  - {fileID: -644292546, guid: 4839c2371ab8f24469d6a874730b1757, type: 3}
+  - {fileID: 1495967885, guid: 4839c2371ab8f24469d6a874730b1757, type: 3}
+  - {fileID: -1617892002, guid: 4839c2371ab8f24469d6a874730b1757, type: 3}
+  - {fileID: 430433330, guid: 4839c2371ab8f24469d6a874730b1757, type: 3}
+  - {fileID: -1740387142, guid: 4839c2371ab8f24469d6a874730b1757, type: 3}
 --- !u!4 &1141449986
 Transform:
   m_ObjectHideFlags: 0

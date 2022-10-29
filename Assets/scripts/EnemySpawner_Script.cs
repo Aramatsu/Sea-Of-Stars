@@ -48,6 +48,8 @@ public class Enemy
 
     public Vector2 planet_pos = new Vector2(0, -225);
 
+    private GameObject current_mana; //variable used in the create method
+
     [Serializable]
     public struct Star // the struct containing all the values for each star
     {
@@ -58,6 +60,8 @@ public class Enemy
         public float damage; // the amount of damage they deal to the player 
         public int Mana; // the amount of mana given when killed 
         public Rigidbody2D rb; // the rigidbody of the star
+
+
 
         //the contructor that allows me to assign all this shit in the inspector
         public Star(GameObject gameObject, Animator anim, float health, float speed, float defense, float damage, Rigidbody2D rb, int mana)
@@ -105,7 +109,8 @@ public class Enemy
         Player_Controller.Onshot -= Shot;
         for (int i = 0; i < mana; i++)
         {
-            Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position);
+            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0));
+            current_mana.GetComponent<Object_script>().Explode(star.gameObject.transform.position);
         }
         UnityEngine.Object.Destroy(star.gameObject);
     }

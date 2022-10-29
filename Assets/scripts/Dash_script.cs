@@ -15,8 +15,8 @@ public class Dash_script : MonoBehaviour
         rigid2d.rotation = Mathf.Rad2Deg * Mathf.Atan2(player_rb.velocity.y, player_rb.velocity.x);//rotates the dash toward the player
         transform.position = new Vector2(player_transform.position.x, player_transform.position.y) + player_rb.velocity / 2;//assigns the position of the dash while adding the offset
         anim.SetTrigger("IsDash");//trigger the dash anim
-        AnimatorClipInfo[] hi = anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-        Invoke("Delay", hi.Length);                                                          
+        AnimatorClipInfo[] clipInfos = anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
+        Invoke("Delay", clipInfos.Length);                                                          
     }
 
 
