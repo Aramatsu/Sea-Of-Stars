@@ -22,7 +22,7 @@ public class Planet_script : MonoBehaviour
         {
             case "Red Dwarf":
                 DamagePlanet(10);
-                Player_Controller.Onshot -= collision.gameObject.GetComponent<Red_Dwarf>().planet.Shot;
+                collision.gameObject.GetComponent<Red_Dwarf>().planet.Die(10);
                 Destroy(collision.gameObject);
                 StartCoroutine(Camera_controller.shared_instance.Camera_shake(1, 1));
                 break;

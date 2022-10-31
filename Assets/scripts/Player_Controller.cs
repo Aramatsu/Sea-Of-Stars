@@ -7,7 +7,7 @@ using System;
 
 public class Player_Controller : MonoBehaviour
 {
-    public delegate void Mydelegate(Transform transform, Weapon weapon);//the delegate that cotains all the methods for when the player shoots
+    public delegate void Mydelegate(Vector2 Direction, Weapon weapon);//the delegate that cotains all the methods for when the player shoots
     public static Mydelegate Onshot; 
 
 
@@ -15,13 +15,15 @@ public class Player_Controller : MonoBehaviour
     public struct Weapon // the struct containing all the data of each weapon
     {
         public float Damage;
+        public float Speed;
         public float Cooldown;
         public string Name;
         public bool CanPierce;
         public bool Repeatable;
-        public Weapon(float damage, string name, bool CanPierce, float cooldown, bool repeatable)//weapon constructor
+        public Weapon(float damage, float speed, string name, bool CanPierce, float cooldown, bool repeatable)//weapon constructor
         {
             this.Damage = damage;
+            this.Speed = speed;
             this.Name = name;
             this.CanPierce = CanPierce;
             this.Cooldown = cooldown;
@@ -58,11 +60,14 @@ public class Player_Controller : MonoBehaviour
     private float health = 100;
     private float mana = 0;
 
-    private Weapon Staff = new Weapon(10, "Staff", false, 1, false); //the staff weapon
-    private Weapon Machinegun = new Weapon(0.5f, "Machinegun", false, 0.5f, true); //the Machinegun weapon
-    private Weapon Sniper = new Weapon(20, "Sniper", true, 2, false); //the sniper weapon
+    private Weapon Staff = new Weapon(10, 30 , "Staff", false, 0.5f, false); //the staff weapon
+    private Weapon Machinegun = new Weapon(5f, 30, "Machinegun", false, 0.25f, true); //the Machinegun weapon
+    private Weapon Sniper = new Weapon(25, 50 , "Sniper", true, 1, false); //the sniper weapon
+
+    private Weapon Super_blast = new Weapon(10, 20 ,"Blast", true, 0.5f, false); //the staff weapon
 
     private Weapon Current_weapon;
+    private Weapon Current_super;
 
     //awake function
     private void Awake()
@@ -73,9 +78,11 @@ public class Player_Controller : MonoBehaviour
     //start yay
     private void Start()
     {
-        dash_timer = Time.realtimeSinceStartup + 0.3f;
-        super_timer = Time.realtimeSinceStartup + 1f;
-        super_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;
+        Current_super = Super_blast;
+        
+        dash_timer = Time.realtimeSinceStartup + 0.5f;
+        super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
+        shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;
     }
 
     // Update is called once per frame
@@ -98,11 +105,11 @@ public class Player_Controller : MonoBehaviour
                 if (super_timer <= Time.realtimeSinceStartup)
                 {
 
-                    super_timer = Time.realtimeSinceStartup + 1f;
+                    super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
                     UpdateMana(-20);
                     player_anim.SetTrigger("Shot_M2");
                     AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-                    Invoke("OnM2", hi.Length - 0.3f);
+                    Invoke("OnM2", hi.Length - 0.5f);
                 }
             }
 
@@ -129,22 +136,6 @@ public class Player_Controller : MonoBehaviour
             Debug.Log(Current_weapon.Name);
         }
 
-        //explode all objects within explosion radius when tapping e 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            
-
-            exploded = Physics2D.OverlapCircleAll(transform.position, explode_radius, explodedable);
-            for (int i = 0; i < exploded.Length; i++)
-            {
-                exploded[i].attachedRigidbody.AddForce(Vector2.ClampMagnitude(V2_distance(exploded[i].transform.position, transform.position) * explosion_power, max_explosion_power));
-                Debug.Log(Vector2.ClampMagnitude(V2_distance(exploded[i].transform.position, transform.position) * explosion_power, max_explosion_power));
-            }
-
-
-            
-        }
-
         //Dash when tapping space
         if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer <= Time.realtimeSinceStartup|| Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer <= Time.realtimeSinceStartup)
         {
@@ -154,37 +145,12 @@ public class Player_Controller : MonoBehaviour
         }
 
         //Shoot with mouse
-        if (Input.GetMouseButtonDown(0) && shooting_timer <= Time.realtimeSinceStartup && !Current_weapon.Repeatable || Input.GetMouseButton(0) && Current_weapon.Repeatable)
+        if (Input.GetMouseButtonDown(0) && shooting_timer <= Time.realtimeSinceStartup && !Current_weapon.Repeatable || Input.GetMouseButton(0) && Current_weapon.Repeatable && shooting_timer <= Time.realtimeSinceStartup)
         {
-            
-            if(Current_weapon.CanPierce == true)// if the current weapon has a can peirce on true...
-            {
-                //use raycastall instead of raycast 
-                RaycastHit2D[] hit_info = Physics2D.RaycastAll(transform.position, GetMousePos() - rigid2d.position, Mathf.Infinity, explodedable);
-                foreach (var hit in hit_info)
-                {
-                    //if hit info is not equal to null, call the onshot delegate and pass the hit objects transform and th weapon struct
-                    if (hit)
-                    {
-                        Onshot?.Invoke(hit.transform, Current_weapon);
-                        
-
-                    }
-                }
-            } 
-            else if (Current_weapon.CanPierce == false) //else if it is false...
-            {
-                //use raycast 
-                RaycastHit2D hit_info = Physics2D.Raycast(transform.position, GetMousePos() - rigid2d.position, Mathf.Infinity, explodedable);
-
-                //if hit info is not equal to null, call the onshot delegate and pass the hit objects transform and th weapon struct
-                if (hit_info)
-                {
-                    Onshot?.Invoke(hit_info.transform, Current_weapon);
-                }
-            }
-
-            StartCoroutine(cam_script.Camera_shake(0.1f, 0.05f));
+            GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x)));
+            StartCoroutine(cam_script.Camera_shake(0.1f, 0.005f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
+            shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;
+            Onshot(new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_weapon);
         }
 
         //set animator parameters
@@ -242,8 +208,13 @@ public class Player_Controller : MonoBehaviour
                 Die();
             }
         }
+    }
+
+    //
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
         //if it is a mana crystal
-        else if (collision.gameObject.CompareTag("Mana"))
+        if (collision.gameObject.CompareTag("Mana"))
         {
             if (mana <= 100)
             {
@@ -267,7 +238,7 @@ public class Player_Controller : MonoBehaviour
         //change this to object pooling later
         GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
         rigid2d.AddForce(-GetMousePos().normalized * 20, ForceMode2D.Impulse);
-        bullet_clone.SendMessage("SetDirection", new Vector2(transform.position.x, transform.position.y) - GetMousePos());
+        Onshot(new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_super);
         StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
 

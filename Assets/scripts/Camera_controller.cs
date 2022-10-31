@@ -29,7 +29,7 @@ public class Camera_controller : MonoBehaviour
         else
         {
             //keep the normal size
-            cam1.orthographicSize = 10;
+            cam1.orthographicSize = 15;
         }
 
         //

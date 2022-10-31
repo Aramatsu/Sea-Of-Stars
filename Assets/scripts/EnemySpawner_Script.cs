@@ -47,6 +47,7 @@ public class Enemy
     public Star star;
 
     public Vector2 planet_pos = new Vector2(0, -225);
+    public  Player_Controller.Weapon current_player_weapon;
 
     private GameObject current_mana; //variable used in the create method
 
@@ -87,14 +88,10 @@ public class Enemy
         star.anim.SetTrigger("Hurt");
     }
 
-    //the function that calculates the shot position
-    public void Shot(Transform shot_info, Player_Controller.Weapon weapon)
+    //the function that sets the weapon of the player
+    public void Shot(Vector2 direction, Player_Controller.Weapon weapon)
     {
-
-        if (Mathf.Abs(shot_info.position.x - star.gameObject.transform.position.x) < 5 && Mathf.Abs(shot_info.position.y - star.gameObject.transform.position.y) < 5)
-        {
-            Damage(weapon.Damage);
-        }
+        current_player_weapon = weapon;
     }
 
     // function that moves the star toward the planet
@@ -109,8 +106,11 @@ public class Enemy
         Player_Controller.Onshot -= Shot;
         for (int i = 0; i < mana; i++)
         {
-            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0));
-            current_mana.GetComponent<Object_script>().Explode(star.gameObject.transform.position);
+            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0), Vector3.zero);
+            if (current_mana)
+            {
+                current_mana.GetComponent<Object_script>().Explode(star.gameObject.transform.position);
+            }
         }
         UnityEngine.Object.Destroy(star.gameObject);
     }
@@ -122,6 +122,10 @@ public class Enemy
         {
             case "Bullet2":
                 Damage(50);
+                break;
+            case "Bullet1":
+                Damage(current_player_weapon.Damage);
+                collision.gameObject.SetActive(false);
                 break;
         }
     }

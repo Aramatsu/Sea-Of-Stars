@@ -6,8 +6,11 @@ public class Object_pool : MonoBehaviour
 {
     public static Object_pool Shared_instance;
     public GameObject[] Pooled_Squares = new GameObject[100];
+    public GameObject[] Pooled_bullets = new GameObject[100];
     public int Number_Squares;
+    public int Number_bullets;
     public GameObject Squares;
+    public GameObject Bullets;
 
     [SerializeField] private Sprite[] Mana_sprites;
     
@@ -28,16 +31,26 @@ public class Object_pool : MonoBehaviour
             Pooled_Squares[i] = clone;
             
         }
+
+        for (int i = 0; i < Number_bullets; i++)
+        {
+            GameObject clone = Instantiate(Bullets, Vector2.zero, Quaternion.identity);
+            clone.SetActive(false);
+            Pooled_bullets[i] = clone;
+
+        }
     }
 
-    public GameObject Create(GameObject[] pool, Vector2 position)
+    public GameObject Create(GameObject[] pool, Vector2 position, Vector3 Rotation)
     {
-        for(int i = 0; i < Number_Squares; i++)
+        for(int i = 0; i < pool.Length; i++)
         {
             if (!pool[i].activeInHierarchy)
             {
-                pool[i].SetActive(true);
                 pool[i].transform.position = position;
+                pool[i].transform.localRotation = Quaternion.Euler(Rotation);
+                pool[i].SetActive(true);
+
                 return pool[i];
             }
         }
