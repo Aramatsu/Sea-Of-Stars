@@ -4,7 +4,7 @@ using System;
 public class EnemySpawner_Script : MonoBehaviour
 {
     //Enemy types
-    [SerializeField] private GameObject Red_dwarf;
+    [SerializeField] private GameObject[] Enemys;
 
     
 
@@ -27,7 +27,7 @@ public class EnemySpawner_Script : MonoBehaviour
         if(spawn_time + spawn_delay <= Time.realtimeSinceStartup)
         {
             //instatiate a red_dwarf
-            Instantiate(Red_dwarf,new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
+            Instantiate(Enemys[UnityEngine.Random.Range(0, Enemys.Length)],new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
             //set spawntime to actual time once
             spawn_time = Time.realtimeSinceStartup;
         }
@@ -47,7 +47,7 @@ public class Enemy
     public Star star;
 
     public Vector2 planet_pos = new Vector2(0, -225);
-    public  Player_Controller.Weapon current_player_weapon;
+    public Player_Controller.Weapon current_player_weapon;
 
     private GameObject current_mana; //variable used in the create method
 
@@ -89,7 +89,7 @@ public class Enemy
     }
 
     //the function that sets the weapon of the player
-    public void Shot(Vector2 direction, Player_Controller.Weapon weapon)
+    public void Shot(Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
     {
         current_player_weapon = weapon;
     }
@@ -106,7 +106,7 @@ public class Enemy
         Player_Controller.Onshot -= Shot;
         for (int i = 0; i < mana; i++)
         {
-            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0), Vector3.zero);
+            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0), Quaternion.identity);
             if (current_mana)
             {
                 current_mana.GetComponent<Object_script>().Explode(star.gameObject.transform.position);
@@ -114,21 +114,7 @@ public class Enemy
         }
         UnityEngine.Object.Destroy(star.gameObject);
     }
-    
-    //
-    public void ontriggerenter(Collider2D collision)
-    {
-        switch (collision.tag)
-        {
-            case "Bullet2":
-                Damage(50);
-                break;
-            case "Bullet1":
-                Damage(current_player_weapon.Damage);
-                collision.gameObject.SetActive(false);
-                break;
-        }
-    }
+   
 
 }
 
@@ -138,3 +124,16 @@ public class Red_dwarf : Enemy
      
 }
 
+//the class of orange_dwarfs
+public class Orange_dwarf : Enemy
+{
+    //variable
+    Player_Controller.Weapon weapon = new Player_Controller.Weapon(25, 30, "Orange Dwarf", false, 5, false);
+    
+    //method that creates bullets via the the object pool and then sets its direction
+    public void Shoot(Vector2 dir)
+    {
+        Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, star.gameObject.transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(dir.y, dir.x))));
+        Player_Controller.Onshot(dir, weapon, new string[] {"Player"});
+    }
+}

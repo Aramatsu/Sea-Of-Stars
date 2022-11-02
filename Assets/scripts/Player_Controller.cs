@@ -7,7 +7,7 @@ using System;
 
 public class Player_Controller : MonoBehaviour
 {
-    public delegate void Mydelegate(Vector2 Direction, Weapon weapon);//the delegate that cotains all the methods for when the player shoots
+    public delegate void Mydelegate(Vector2 Direction, Weapon weapon, string[] tags);//the delegate that cotains all the methods for when the player shoots
     public static Mydelegate Onshot; 
 
 
@@ -60,11 +60,11 @@ public class Player_Controller : MonoBehaviour
     private float health = 100;
     private float mana = 0;
 
-    private Weapon Staff = new Weapon(10, 30 , "Staff", false, 0.5f, false); //the staff weapon
-    private Weapon Machinegun = new Weapon(5f, 30, "Machinegun", false, 0.25f, true); //the Machinegun weapon
-    private Weapon Sniper = new Weapon(25, 50 , "Sniper", true, 1, false); //the sniper weapon
+    private Weapon Staff = new Weapon(10, 50 , "Staff", false, 0.25f, false); //the staff weapon
+    private Weapon Machinegun = new Weapon(5f, 50, "Machinegun", false, 0.125f, true); //the Machinegun weapon
+    private Weapon Sniper = new Weapon(25, 70 , "Sniper", true, 0.5f, false); //the sniper weapon
 
-    private Weapon Super_blast = new Weapon(10, 20 ,"Blast", true, 0.5f, false); //the staff weapon
+    private Weapon Super_blast = new Weapon(10, 20 ,"Blast", true, 0.5f, false); //the Blast super weapon
 
     private Weapon Current_weapon;
     private Weapon Current_super;
@@ -73,6 +73,7 @@ public class Player_Controller : MonoBehaviour
     private void Awake()
     {
         player_transform = transform;
+        Current_weapon = Staff;
     }
 
     //start yay
@@ -115,7 +116,7 @@ public class Player_Controller : MonoBehaviour
 
         }
 
-        //
+        //switch weapons with tab
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             switch (Current_weapon.Name)
@@ -147,10 +148,10 @@ public class Player_Controller : MonoBehaviour
         //Shoot with mouse
         if (Input.GetMouseButtonDown(0) && shooting_timer <= Time.realtimeSinceStartup && !Current_weapon.Repeatable || Input.GetMouseButton(0) && Current_weapon.Repeatable && shooting_timer <= Time.realtimeSinceStartup)
         {
-            GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x)));
-            StartCoroutine(cam_script.Camera_shake(0.1f, 0.005f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
-            shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;
-            Onshot(new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_weapon);
+            GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position,Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));//makes a bullet
+            StartCoroutine(cam_script.Camera_shake(0.1f, 0.025f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
+            shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;//reset the timer
+            Onshot(new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_weapon, new string[] {"Orange Dwarf", "Red Dwarf"});//send info to the newly made clone
         }
 
         //set animator parameters
@@ -197,16 +198,7 @@ public class Player_Controller : MonoBehaviour
         //check tag if its the red dwarf
         if (collision.gameObject.CompareTag("Red Dwarf"))
         {
-            health -= 5;
-            if (health > 0)
-            {
-                Health_bar.value = health;
-                rigid2d.velocity = -1 * rigid2d.velocity;
-            }
-            else
-            {
-                Die();
-            }
+            damage(5);
         }
     }
 
@@ -238,7 +230,7 @@ public class Player_Controller : MonoBehaviour
         //change this to object pooling later
         GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
         rigid2d.AddForce(-GetMousePos().normalized * 20, ForceMode2D.Impulse);
-        Onshot(new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_super);
+        Onshot(new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_weapon, new string[] { "Orange Dwarf", "Red Dwarf" });//send info to the newly made clone
         StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
 
@@ -247,5 +239,20 @@ public class Player_Controller : MonoBehaviour
     {
         //find mouse position in relation to world point
         return cam.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    //
+    public void damage(float damage)
+    {
+        health -= damage;
+        if (health > 0)
+        {
+            Health_bar.value = health;
+            rigid2d.velocity = -1 * rigid2d.velocity;
+        }
+        else
+        {
+            Die();
+        }
     }
 }

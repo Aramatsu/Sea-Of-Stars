@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: bdaa7d593c4b6484c8302f237473a4c1
+guid: c2b02b64228f84e41b089dc9cd265c86
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -117,13 +117,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Repel_0
+      name: New Piskel (5)_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 416
-        width: 208
-        height: 208
+        y: 2048
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +131,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8f407ee9fff5bf24ebc8974e8c3a37a5
-      internalID: -150273527
+      spriteID: db2dad0649c996a49ad5aac418f0f391
+      internalID: 2050970497
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Repel_1
+      name: New Piskel (5)_1
       rect:
         serializedVersion: 2
-        x: 208
-        y: 416
-        width: 208
-        height: 208
+        x: 1024
+        y: 2048
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -152,62 +152,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cbab97569bb90904abf4240055aa5129
-      internalID: 674846938
+      spriteID: 42d6c69d0e3336642a050d92012ab4dc
+      internalID: -1669024162
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Repel_2
-      rect:
-        serializedVersion: 2
-        x: 416
-        y: 416
-        width: 208
-        height: 208
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7e2c451d7851fc643b31c20c5053906d
-      internalID: 1558882742
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Repel_3
-      rect:
-        serializedVersion: 2
-        x: 624
-        y: 416
-        width: 208
-        height: 208
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e620892e4445e3449be11b7dbe732dbd
-      internalID: 1425382300
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Repel_4
+      name: New Piskel (5)_2
       rect:
         serializedVersion: 2
         x: 0
-        y: 208
-        width: 208
-        height: 208
+        y: 1024
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,20 +173,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6cf07002e1de62d4b868a4d1b6e3759a
-      internalID: -657296268
+      spriteID: 944717f237422d14a87f83df9ceb3124
+      internalID: -770411779
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Repel_5
+      name: New Piskel (5)_3
       rect:
         serializedVersion: 2
-        x: 208
-        y: 208
-        width: 208
-        height: 208
+        x: 1024
+        y: 1024
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,62 +194,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 05c467356b2cf9940b476df22b08109b
-      internalID: -672279564
+      spriteID: 1ffd3fe942f221641a18c220296c7b21
+      internalID: 319500294
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Repel_6
-      rect:
-        serializedVersion: 2
-        x: 416
-        y: 208
-        width: 208
-        height: 208
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 25bc8fb2a4c577547b918645582ec966
-      internalID: -1035689106
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Repel_7
-      rect:
-        serializedVersion: 2
-        x: 624
-        y: 208
-        width: 208
-        height: 208
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8a9a20784bc126a43a1c85a01aa7cf8d
-      internalID: -1076258622
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Repel_8
+      name: New Piskel (5)_4
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 208
-        height: 208
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -299,20 +215,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0e7d2dc8644d0d43ac1b3de908aaa5a
-      internalID: 644378417
+      spriteID: f166777cfbb00be4d8c4df1abc1868e5
+      internalID: 151582518
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Repel_9
+      name: New Piskel (5)_5
       rect:
         serializedVersion: 2
-        x: 208
+        x: 1024
         y: 0
-        width: 208
-        height: 208
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -320,50 +236,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5f4f0549e4d202140b6da7a07a032c26
-      internalID: -176541824
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Repel_10
-      rect:
-        serializedVersion: 2
-        x: 416
-        y: 0
-        width: 208
-        height: 208
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e613f4ef963bae14f9237d6e536c3e6a
-      internalID: -1603845943
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Repel_11
-      rect:
-        serializedVersion: 2
-        x: 624
-        y: 0
-        width: 208
-        height: 208
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9ef611668c96f134f91b57b28121d550
-      internalID: -1428400202
+      spriteID: 6db41442935540840a2218e2555fa25a
+      internalID: -1757885942
       vertices: []
       indices: 
       edges: []
@@ -379,18 +253,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Repel_6: -1035689106
-      Repel_4: -657296268
-      Repel_11: -1428400202
-      Repel_3: 1425382300
-      Repel_1: 674846938
-      Repel_5: -672279564
-      Repel_8: 644378417
-      Repel_10: -1603845943
-      Repel_2: 1558882742
-      Repel_7: -1076258622
-      Repel_9: -176541824
-      Repel_0: -150273527
+      New Piskel (5)_2: -770411779
+      New Piskel (5)_3: 319500294
+      New Piskel (5)_4: 151582518
+      New Piskel (5)_1: -1669024162
+      New Piskel (5)_0: 2050970497
+      New Piskel (5)_5: -1757885942
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -5,8 +5,8 @@ using UnityEngine;
 public class Object_pool : MonoBehaviour
 {
     public static Object_pool Shared_instance;
-    public GameObject[] Pooled_Squares = new GameObject[100];
-    public GameObject[] Pooled_bullets = new GameObject[100];
+    public GameObject[] Pooled_Squares = new GameObject[20];
+    public GameObject[] Pooled_bullets = new GameObject[20];
     public int Number_Squares;
     public int Number_bullets;
     public GameObject Squares;
@@ -41,14 +41,14 @@ public class Object_pool : MonoBehaviour
         }
     }
 
-    public GameObject Create(GameObject[] pool, Vector2 position, Vector3 Rotation)
+    public GameObject Create(GameObject[] pool, Vector2 position, Quaternion rotation)
     {
         for(int i = 0; i < pool.Length; i++)
         {
             if (!pool[i].activeInHierarchy)
             {
                 pool[i].transform.position = position;
-                pool[i].transform.localRotation = Quaternion.Euler(Rotation);
+                pool[i].transform.localRotation = rotation;
                 pool[i].SetActive(true);
 
                 return pool[i];
