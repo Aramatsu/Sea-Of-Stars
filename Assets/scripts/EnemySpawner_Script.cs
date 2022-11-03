@@ -89,7 +89,7 @@ public class Enemy
     }
 
     //the function that sets the weapon of the player
-    public void Shot(Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
+    public void Shot(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
     {
         current_player_weapon = weapon;
     }
@@ -131,9 +131,10 @@ public class Orange_dwarf : Enemy
     Player_Controller.Weapon weapon = new Player_Controller.Weapon(25, 30, "Orange Dwarf", false, 5, false);
     
     //method that creates bullets via the the object pool and then sets its direction
-    public void Shoot(Vector2 dir)
+    public GameObject Shoot(Quaternion rotation, Vector2 direction)
     {
-        Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, star.gameObject.transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(dir.y, dir.x))));
-        Player_Controller.Onshot(dir, weapon, new string[] {"Player"});
+        GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, star.gameObject.transform.position, rotation);
+        Player_Controller.Onshot(rotation, direction, weapon, new string[] {"Player"});
+        return bullet_clone;
     }
 }

@@ -25,7 +25,7 @@ public class Planet_script : MonoBehaviour
 
             case "Orange Dwarf":
                 DamagePlanet(20);
-                collision.gameObject.GetComponent<Red_Dwarf>().planet.Die(0);
+                collision.gameObject.GetComponent<Orange_dwarf_script>().planet.Die(0);
                 StartCoroutine(Camera_controller.shared_instance.Camera_shake(1, 1));
                 break;
         }

@@ -7,7 +7,9 @@ public class Orange_dwarf_script : MonoBehaviour
     //assign variable at start
     public Orange_dwarf planet = new Orange_dwarf();
     [SerializeField] public Enemy.Star star;
-    private float shoot_timer = 1;
+    private float shoot_timer = 5;
+
+    private GameObject Current_bullet;
 
 
     private void Start()
@@ -24,16 +26,21 @@ public class Orange_dwarf_script : MonoBehaviour
     {
         if (shoot_timer < Time.realtimeSinceStartup)
         {
-            planet.Shoot(new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)));
-            shoot_timer = Time.realtimeSinceStartup + 0.5f;
 
-            /**for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
-                planet.Shoot(new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)));
+                Current_bullet = planet.Shoot(Quaternion.Euler(0, 0, 180 + (72 * (i + 1))), AngleToVec2(72 * (i + 1), 1));
             }
-            shoot_timer = Time.realtimeSinceStartup + 5;**/
+            shoot_timer = Time.realtimeSinceStartup + 5;
         }
         
         planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb, star.speed);
+    }
+
+    private Vector2 AngleToVec2(float rotation, float Magnitude)
+    {
+        rotation = Mathf.Deg2Rad * rotation;
+        Vector2 ans = new Vector2(Mathf.Cos(rotation) * Magnitude, Mathf.Sin(rotation) * Magnitude);
+        return ans;
     }
 }

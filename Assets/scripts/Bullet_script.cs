@@ -8,9 +8,10 @@ public class Bullet_script : MonoBehaviour
     [HideInInspector]
     public Player_Controller.Weapon current_weapon;
     public string[] Tags_affected;
+    private Quaternion rotation;
     private Vector2 direction;
 
-    //
+    //      
     private void onawake()
     {
         Player_Controller.Onshot += SetValues;// on awake add Setvalues to onshot
@@ -29,10 +30,11 @@ public class Bullet_script : MonoBehaviour
     }
 
     //sets variables
-    public void SetValues(Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
+    public void SetValues(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
     {
         current_weapon = weapon;
         this.direction = direction.normalized * weapon.Speed;
+        transform.rotation = rotation;
         this.Tags_affected = tags; //all the tags that will be affected by this bullet
         rb.position = rb.position - (direction * 0.25f);
         Player_Controller.Onshot -= SetValues;// remove setvalues to ensure you dont add more values on top of its given ones
@@ -48,7 +50,7 @@ public class Bullet_script : MonoBehaviour
                 switch (collision.gameObject.tag)//check specifically which one
                 {
                     case "Player":
-                        collision.gameObject.GetComponent<Player_Controller>().damage(current_weapon.Damage);
+                        collision.gameObject.GetComponent<Player_Controller>().damage(current_weapon.Damage, -direction, 30);
                         gameObject.SetActive(false);
                         break;
                     case "Red Dwarf":
