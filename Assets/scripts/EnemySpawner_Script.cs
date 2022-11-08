@@ -1,26 +1,37 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class EnemySpawner_Script : MonoBehaviour
 {
     //Enemy types
     [SerializeField] private GameObject[] Enemys;
 
-    
+    [Serializable]
+    public struct Wave_Enemy //A struct containing both the enemy and when it spawns
+    {
+        public GameObject Enemy_prefab;
+        public float When_to_spawn;
+    }
+
+    [SerializeField] private Wave_Enemy[] Wave;
+
+    [SerializeField] private Array[] Waves;
 
     //variables for enemy spawning
     [SerializeField] private Transform spawn_area;
-    [SerializeField] private float spawn_delay;
-    private float spawn_time;
+
+    private Wave_Enemy current_wave;
+    private int Enemy_num; //number of enemys 
+    
 
     //start function
     private void Start()
     {
-        //set spawntime to actual time once
-        spawn_time = Time.realtimeSinceStartup;
+        StartCoroutine(OnWave());
     }
 
-    //update function
+    /**update function
     private void Update()
     {
         //once realtime is higher than spawn time plus the delay between each spawn...
@@ -31,61 +42,67 @@ public class EnemySpawner_Script : MonoBehaviour
             //set spawntime to actual time once
             spawn_time = Time.realtimeSinceStartup;
         }
-    }
+    }**/
+
+    
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(new Vector2(-1 * (spawn_area.localScale.x / 2), spawn_area.position.y),new Vector2(spawn_area.localScale.x / 2, spawn_area.position.y));
     }
 
+    IEnumerator OnWave()
+    {
+        for (int i = 0; i < Wave.Length; i++)
+        {
+            yield return new WaitForSeconds(Wave[i].When_to_spawn);
+            Debug.Log("Help");
+            Instantiate(Wave[i].Enemy_prefab, new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);;
+        }
+    }
 }
 
 
 //The main class of all enemies
-public class Enemy
+public class Enemy : MonoBehaviour
 {
-    public Star star;
-
-    public Vector2 planet_pos = new Vector2(0, -225);
+    [Header("References")]
     public Player_Controller.Weapon current_player_weapon;
+    public Rigidbody2D rb; // the rigidbody of the star
+    public Animator anim;// the anim of the star
 
+    [Space]
+    [Header("Prefabs")]
     private GameObject current_mana; //variable used in the create method
 
-    [Serializable]
-    public struct Star // the struct containing all the values for each star
+    [Space]
+    [Header("Values")]
+    public Vector2 planet_pos = new Vector2(0, -225);
+    public float health; //the enemies health
+    public float speed; // their speed
+    public float damage; // the amount of damage they deal to the player 
+    public int Mana; // the amount of mana given when killed 
+
+    //function used for when the star touches a trigger
+    public void ontriggerenter(Collider2D collision)
     {
-        public GameObject gameObject;//the gameobject of the 
-        public Animator anim;// the anim of the star
-        public float health; //the enemies health
-        public float speed; // their speed
-        public float damage; // the amount of damage they deal to the player 
-        public int Mana; // the amount of mana given when killed 
-        public Rigidbody2D rb; // the rigidbody of the star
-
-
-
-        //the contructor that allows me to assign all this shit in the inspector
-        public Star(GameObject gameObject, Animator anim, float health, float speed, float defense, float damage, Rigidbody2D rb, int mana)
+        switch (collision.tag)
         {
-            this.gameObject = gameObject;
-            this.anim = anim;
-            this.health = health;
-            this.speed = speed;
-            this.damage = damage;
-            this.rb = rb;
-            Mana = mana;
-
+            case "Player":
+                Damage(20);
+                break;
+                
         }
     }
     //function that hurts the star and does the coresponding other crap
     public void Damage(float damage)
     {
-        star.health -= damage;
-        if (star.health <= 0)
+        health -= damage;
+        if (health <= 0)
         {
-            Die(star.Mana); // gio sucks
+            Die(Mana); // gio sucks
         }
-        star.anim.SetTrigger("Hurt");
+        anim.SetTrigger("Hurt");
     }
 
     //the function that sets the weapon of the player
@@ -106,13 +123,13 @@ public class Enemy
         Player_Controller.Onshot -= Shot;
         for (int i = 0; i < mana; i++)
         {
-            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, star.gameObject.transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0), Quaternion.identity);
+            current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0), Quaternion.identity);
             if (current_mana)
             {
-                current_mana.GetComponent<Object_script>().Explode(star.gameObject.transform.position);
+                current_mana.GetComponent<Object_script>().Explode(transform.position);
             }
         }
-        UnityEngine.Object.Destroy(star.gameObject);
+        Destroy(gameObject);
     }
    
 
@@ -127,13 +144,15 @@ public class Red_dwarf : Enemy
 //the class of orange_dwarfs
 public class Orange_dwarf : Enemy
 {
-    //variable
-    Player_Controller.Weapon weapon = new Player_Controller.Weapon(25, 30, "Orange Dwarf", false, 5, false);
-    
+    //variables
+    Player_Controller.Weapon weapon = new Player_Controller.Weapon("Orange Dwarf", 25, 30, 5, 0, false, false);
+    public float shoot_timer = 2;
+    public float bullet_offset = 0;
+
     //method that creates bullets via the the object pool and then sets its direction
     public GameObject Shoot(Quaternion rotation, Vector2 direction)
     {
-        GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, star.gameObject.transform.position, rotation);
+        GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, rotation);
         Player_Controller.Onshot(rotation, direction, weapon, new string[] {"Player"});
         return bullet_clone;
     }

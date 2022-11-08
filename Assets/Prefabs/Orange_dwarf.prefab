@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4939851481612742167}
   - component: {fileID: 2980711330410668142}
   - component: {fileID: 4939851481612742154}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Orange_dwarf
   m_TagString: Orange Dwarf
   m_Icon: {fileID: 0}
@@ -86,14 +86,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a398fa2aae72644a9e1a61e63e3d18f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  star:
-    gameObject: {fileID: 4939851481612742170}
-    anim: {fileID: 4599575454081682717}
-    health: 75
-    speed: 0.001
-    damage: 10
-    Mana: 10
-    rb: {fileID: 2980711330410668142}
+  current_player_weapon:
+    Name: 
+    Damage: 0
+    Speed: 0
+    Cooldown: 0
+    CanPierce: 0
+    Repeatable: 0
+    Accuracy: 0
+  rb: {fileID: 2980711330410668142}
+  anim: {fileID: 4599575454081682717}
+  planet_pos: {x: 0, y: -225}
+  health: 120
+  speed: 0.0025
+  damage: 10
+  Mana: 10
+  shoot_timer: 2
+  bullet_offset: 0
 --- !u!1 &4939851482716834788
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +114,7 @@ GameObject:
   - component: {fileID: 4939851482716834791}
   - component: {fileID: 4939851482716834790}
   - component: {fileID: 4599575454081682717}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Orange_dwarf_gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +218,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939851483204371776}
   - component: {fileID: 4939851483204371779}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

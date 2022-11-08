@@ -5,10 +5,10 @@ using UnityEngine;
 public class Object_pool : MonoBehaviour
 {
     public static Object_pool Shared_instance;
-    public GameObject[] Pooled_Squares = new GameObject[20];
-    public GameObject[] Pooled_bullets = new GameObject[20];
-    public int Number_Squares;
-    public int Number_bullets;
+    public List<GameObject> Pooled_Squares;
+    public List<GameObject> Pooled_bullets;
+    public int Number_of_Squares;
+    public int Number_of_Bullets;
     public GameObject Squares;
     public GameObject Bullets;
 
@@ -23,30 +23,32 @@ public class Object_pool : MonoBehaviour
     //
     private void Start()
     {
-        for (int i = 0; i < Number_Squares; i++)
+        for (int i = 0; i < Number_of_Squares; i++)
         {
             GameObject clone = Instantiate(Squares, Vector2.zero, Quaternion.identity);
             clone.GetComponent<SpriteRenderer>().sprite = Mana_sprites[Random.Range(0, Mana_sprites.Length)]; 
             clone.SetActive(false);
-            Pooled_Squares[i] = clone;
+            Pooled_Squares.Add(clone);
             
         }
 
-        for (int i = 0; i < Number_bullets; i++)
+        for (int i = 0; i < Number_of_Bullets; i++)
         {
             GameObject clone = Instantiate(Bullets, Vector2.zero, Quaternion.identity);
             clone.SetActive(false);
-            Pooled_bullets[i] = clone;
+            Pooled_bullets.Add(clone);
 
         }
     }
 
-    public GameObject Create(GameObject[] pool, Vector2 position, Quaternion rotation)
+    public GameObject Create(List<GameObject> pool, Vector2 position, Quaternion rotation)
     {
-        for(int i = 0; i < pool.Length; i++)
+        //Check if there are any unactive objects
+        for(int i = 0; i < pool.Count; i++)
         {
             if (!pool[i].activeInHierarchy)
             {
+                //and if so activate that object and return it
                 pool[i].transform.position = position;
                 pool[i].transform.localRotation = rotation;
                 pool[i].SetActive(true);
@@ -54,6 +56,25 @@ public class Object_pool : MonoBehaviour
                 return pool[i];
             }
         }
+        //if they are all active create a new one
+        if (pool[0].CompareTag("Mana"))
+        {
+            GameObject clone = Instantiate(Squares, Vector2.zero, Quaternion.identity);
+            clone.GetComponent<SpriteRenderer>().sprite = Mana_sprites[Random.Range(0, Mana_sprites.Length)];
+            clone.SetActive(true);
+            pool.Add(clone);
+            return pool[pool.Count - 1];
+        }
+        else if (pool[0].CompareTag("Bullet1"))
+        {
+            GameObject clone = Instantiate(Bullets, Vector2.zero, Quaternion.identity);
+            clone.SetActive(true);
+            pool.Add(clone);
+            return pool[pool.Count - 1];
+        }
+
+        //If all else fails, return null
         return null;
+        
     }
 }

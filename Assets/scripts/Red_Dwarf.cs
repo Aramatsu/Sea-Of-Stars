@@ -2,25 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Red_Dwarf : MonoBehaviour
+public class Red_Dwarf : Red_dwarf
 {
-    //assign variable at start
-    public Red_dwarf planet = new Red_dwarf();
-    [SerializeField]public Enemy.Star star;
     
 
     private void Start()
     {
-        Player_Controller.Onshot += planet.Shot;
-        planet.star = star;
-        planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb, star.speed);
+        Player_Controller.Onshot += Shot;
+        MoveToPlanet(transform.position, planet_pos, rb, speed);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        planet.MoveToPlanet(transform.position, planet.planet_pos, star.rb, star.speed);
+        MoveToPlanet(transform.position, planet_pos, rb, speed);
+    }
+
+    //when entering a trigger
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        ontriggerenter(collision);
     }
 
 }

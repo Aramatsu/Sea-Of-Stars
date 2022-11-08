@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2114724565419403762}
   - component: {fileID: 2114724565419403761}
   - component: {fileID: 8109152380147689352}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Red_dwarf
   m_TagString: Red Dwarf
   m_Icon: {fileID: 0}
@@ -49,14 +49,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d39bd0aab74a934290232ea35eef6d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  star:
-    gameObject: {fileID: 2114724565419403772}
-    anim: {fileID: 7349904863621171963}
-    health: 50
-    speed: 0.001
-    damage: 10
-    Mana: 10
-    rb: {fileID: 8109152380147689352}
+  current_player_weapon:
+    Name: 
+    Damage: 0
+    Speed: 0
+    Cooldown: 0
+    CanPierce: 0
+    Repeatable: 0
+    Accuracy: 0
+  rb: {fileID: 8109152380147689352}
+  anim: {fileID: 7349904863621171963}
+  planet_pos: {x: 0, y: -225}
+  health: 100
+  speed: 0.0035
+  damage: 10
+  Mana: 10
 --- !u!58 &2114724565419403761
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -104,7 +111,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2114724565840954022}
   - component: {fileID: 2114724565840954021}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -216,7 +223,7 @@ GameObject:
   - component: {fileID: 2114724566460615681}
   - component: {fileID: 2114724566460615680}
   - component: {fileID: 7349904863621171963}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Red Dwarf_Gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}

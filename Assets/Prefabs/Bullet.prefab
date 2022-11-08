@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 8064720942891171049}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.6717972}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2559677615664095289}
@@ -114,9 +114,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2559677615664095289}
-  - component: {fileID: 266788149778987989}
   - component: {fileID: 8834309829829964477}
   - component: {fileID: 8309231341016746161}
+  - component: {fileID: 9162317719899781808}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet2
@@ -132,8 +132,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8136405688852105750}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalPosition: {x: 14.51, y: 1.89, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 598852837816207587}
@@ -142,27 +142,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &266788149778987989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8136405688852105750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15d596acc4ecd9044b3de96ced3445d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 8834309829829964477}
-  current_weapon:
-    Damage: 0
-    Speed: 0
-    Cooldown: 0
-    Name: 
-    CanPierce: 0
-    Repeatable: 0
-  Tags_affected: []
 --- !u!50 &8834309829829964477
 Rigidbody2D:
   serializedVersion: 4
@@ -197,9 +176,32 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 6.55, y: 0}
+  m_Offset: {x: 12.65, y: 0}
   serializedVersion: 2
-  m_Radius: 0.90826464
+  m_Radius: 3.25
+--- !u!114 &9162317719899781808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136405688852105750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d596acc4ecd9044b3de96ced3445d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 8834309829829964477}
+  current_weapon:
+    Name: 
+    Damage: 0
+    Speed: 0
+    Cooldown: 0
+    CanPierce: 0
+    Repeatable: 0
+    Accuracy: 0
+  Tags_affected: []
+  spriteRenderer: {fileID: 2034419389478263805}
 --- !u!1 &8246893265823331829
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +338,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8789345996312635732}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.37, y: 0, z: 0}
+  m_LocalPosition: {x: 13.77, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -382,8 +384,8 @@ TrailRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 916538279
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Time: 3
   m_Parameters:

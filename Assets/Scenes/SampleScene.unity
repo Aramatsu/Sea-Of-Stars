@@ -594,7 +594,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 63
+    m_Bits: 191
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1531,210 +1531,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd001178a8bfaf84ca7683119941d5df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pooled_Squares:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  Pooled_bullets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  Number_Squares: 20
-  Number_bullets: 30
+  Pooled_Squares: []
+  Pooled_bullets: []
+  Number_of_Squares: 20
+  Number_of_Bullets: 20
   Squares: {fileID: 910415207246227483, guid: 2d73264c1f2a6e04d833fe2604a84fff, type: 3}
   Bullets: {fileID: 6089524440582510184, guid: b77bbfcc18b467b4b834563e8eb83be7, type: 3}
   Mana_sprites:
@@ -2422,8 +2222,26 @@ MonoBehaviour:
   Enemys:
   - {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
   - {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+  Wave:
+  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+    When_to_spawn: 5
+  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+    When_to_spawn: 2
+  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+    When_to_spawn: 2
+  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+    When_to_spawn: 2
+  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+    When_to_spawn: 2
+  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+    When_to_spawn: 3
+  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+    When_to_spawn: 3
+  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+    When_to_spawn: 3
+  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+    When_to_spawn: 3
   spawn_area: {fileID: 1658413513}
-  spawn_delay: 7.5
 --- !u!4 &1409992389
 Transform:
   m_ObjectHideFlags: 0
@@ -2964,25 +2782,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e018cc0b59a7554d93afbdc327a4986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
   cam: {fileID: 519420031}
-  dash_speed: 6000
   rigid2d: {fileID: 2027785211}
-  movement_damping: 0.1
-  exploded: []
-  explodedable:
-    serializedVersion: 2
-    m_Bits: 8
-  explode_radius: 20
-  explosion_power: 10
+  collider2d: {fileID: 2027785212}
   player_anim: {fileID: 1298845693}
-  max_explosion_power: 0.2
-  bullet: {fileID: 8136405688852105750, guid: 4a4302c94e8924245af861dbf73b4d3b, type: 3}
   Health_bar: {fileID: 1185899340}
   Mana_bar: {fileID: 750562311}
+  cam_script: {fileID: 519420034}
+  bullet: {fileID: 8136405688852105750, guid: 4a4302c94e8924245af861dbf73b4d3b, type: 3}
   dash: {fileID: 6972457990780921863, guid: 50cb666c777be144d8f3ab2b3669733f, type: 3}
   gfx: {fileID: 1298845690}
-  cam_script: {fileID: 519420034}
+  speed: 20
+  dash_speed: 8000
+  movement_damping: 0.1
 --- !u!1 &2107973110
 GameObject:
   m_ObjectHideFlags: 0

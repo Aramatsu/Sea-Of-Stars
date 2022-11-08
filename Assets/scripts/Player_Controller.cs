@@ -8,19 +8,20 @@ using System;
 public class Player_Controller : MonoBehaviour
 {
     public delegate void Mydelegate(Quaternion rotation, Vector2 direction, Weapon weapon, string[] tags);//the delegate that cotains all the methods for when the player shoots
-    public static Mydelegate Onshot; 
+    public static Mydelegate Onshot;
 
 
     [Serializable]
     public struct Weapon // the struct containing all the data of each weapon
     {
+        public string Name;
         public float Damage;
         public float Speed;
         public float Cooldown;
-        public string Name;
         public bool CanPierce;
         public bool Repeatable;
-        public Weapon(float damage, float speed, string name, bool CanPierce, float cooldown, bool repeatable)//weapon constructor
+        public float Accuracy;
+        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable)//weapon constructor
         {
             this.Damage = damage;
             this.Speed = speed;
@@ -28,27 +29,32 @@ public class Player_Controller : MonoBehaviour
             this.CanPierce = CanPierce;
             this.Cooldown = cooldown;
             this.Repeatable = repeatable;
+            this.Accuracy = Accuracy;
+            
         }
     }
 
-    [SerializeField] private float speed; //speed
+    [Header("References")]
     [SerializeField] private Camera cam; //camera
-    [SerializeField] private float dash_speed; //dash speed
-    [SerializeField] private Rigidbody2D rigid2d; //the rigidbady of this object
+    public Rigidbody2D rigid2d; //the rigidbody of this object, its public because other things need to access it
+    [SerializeField] private Collider2D collider2d;
     [SerializeField] public static Transform player_transform; //putting the transform here because it saves al ittle on efficiency
-    [SerializeField] private float movement_damping; //how much the movement should smooth out    
-    [SerializeField] private Collider2D[] exploded; //objects that have been exploded
-    [SerializeField] private LayerMask explodedable; //objects that should be exploded
-    [SerializeField] private float explode_radius; //radius of the explosion
-    [SerializeField] private float explosion_power; //power of explosion
     [SerializeField] private Animator player_anim; //the animator of the player
-    [SerializeField] private float max_explosion_power; //the max amount of force you can apply on an object
-    [SerializeField] private GameObject bullet; //Bullet
     [SerializeField] private Slider Health_bar; //the health bar the health is connected to
     [SerializeField] private Slider Mana_bar; //the mana bar the mana is connected to
+    [SerializeField] private Camera_controller cam_script;
+
+    [Space]
+    [Header("Prefabs")]
+    [SerializeField] private GameObject bullet; //camera
     [SerializeField] private GameObject dash;//The dash gameobject
     [SerializeField] private GameObject gfx;//The gfx of the player gameobject
-    [SerializeField] private Camera_controller cam_script;
+
+    [Space]
+    [Header("Values")]
+    [SerializeField] private float speed; //speed
+    [SerializeField] private float dash_speed; //dash speed 
+    [SerializeField] private float movement_damping; //how much the movement should smooth out   
 
     private float dash_timer;//The timer for the dash
     private float super_timer;//The timer for the super attack
@@ -60,11 +66,11 @@ public class Player_Controller : MonoBehaviour
     private float health = 100;
     private float mana = 0;
 
-    private Weapon Staff = new Weapon(10, 50 , "Staff", false, 0.25f, false); //the staff weapon
-    private Weapon Machinegun = new Weapon(5f, 50, "Machinegun", false, 0.125f, true); //the Machinegun weapon
-    private Weapon Sniper = new Weapon(25, 70 , "Sniper", true, 0.5f, false); //the sniper weapon
+    private Weapon Staff = new Weapon("Staff", 10, 50, 0.25f, 5, false, false); //the staff weapon
+    private Weapon Machinegun = new Weapon("Machinegun", 5f, 50, 0.125f, 10, false, true); //the Machinegun weapon
+    private Weapon Sniper = new Weapon("Sniper", 25, 70, 0.5f, 0, true, false); //the sniper weapon
 
-    private Weapon Super_blast = new Weapon(10, 20 ,"Blast", true, 0.5f, false); //the Blast super weapon
+    private Weapon Super_blast = new Weapon("Blast", 10, 50 , 0.5f, 0, true, false); //the Blast super weapon
 
     private Weapon Current_weapon;
     private Weapon Current_super;
@@ -72,8 +78,8 @@ public class Player_Controller : MonoBehaviour
     //awake function
     private void Awake()
     {
-        player_transform = transform;
         Current_weapon = Staff;
+        player_transform = transform;
     }
 
     //start yay
@@ -90,7 +96,7 @@ public class Player_Controller : MonoBehaviour
     void Update()
     {
         
-        //update movement variables variables 
+        //update movement variables  
         horimove = Input.GetAxisRaw("Horizontal");
         vertmove = Input.GetAxisRaw("Vertical");
 
@@ -99,20 +105,13 @@ public class Player_Controller : MonoBehaviour
         rigid2d.velocity = Vector2.SmoothDamp(rigid2d.velocity, target_velocity, ref velocity, movement_damping);
 
         //super attack
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && mana >= 20 && super_timer <= Time.realtimeSinceStartup)
         {
-            if (mana >= 20)
-            {
-                if (super_timer <= Time.realtimeSinceStartup)
-                {
-
-                    super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
-                    UpdateMana(-20);
-                    player_anim.SetTrigger("Shot_M2");
-                    AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-                    Invoke("OnM2", hi.Length - 0.5f);
-                }
-            }
+            super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
+            UpdateMana(-20);
+            player_anim.SetTrigger("Shot_M2");
+            AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
+            Invoke("OnM2", hi.Length - 0.5f);
 
         }
 
@@ -140,9 +139,19 @@ public class Player_Controller : MonoBehaviour
         //Dash when tapping space
         if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer <= Time.realtimeSinceStartup|| Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer <= Time.realtimeSinceStartup)
         {
+            collider2d.isTrigger = true;
             Dash();
             dash_timer = Time.realtimeSinceStartup + 0.3f;
             rigid2d.AddForce(new Vector3(horimove, vertmove) * dash_speed);
+        }
+
+        if (MathF.Abs(rigid2d.velocity.x) > 21 || MathF.Abs(rigid2d.velocity.y) > 21)
+        {
+            collider2d.isTrigger = true;
+        } 
+        else
+        {
+            collider2d.isTrigger = false;
         }
 
         //Shoot with mouse
@@ -198,11 +207,12 @@ public class Player_Controller : MonoBehaviour
         //check tag if its the red dwarf
         if (collision.gameObject.CompareTag("Red Dwarf"))
         {
+            rigid2d.AddForce(-(rigid2d.velocity.normalized * 10)); 
             damage(5);
         }
     }
 
-    //
+    //when entering a trigger
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //if it is a mana crystal
@@ -217,14 +227,14 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    //
+    //method to update the mana amount
     private void UpdateMana(float amount)
     {
         mana += amount;
         Mana_bar.value = mana;
     }
 
-    //
+    //Called when using the special attack
     private void OnM2()
     {
         //change this to object pooling later
@@ -241,7 +251,7 @@ public class Player_Controller : MonoBehaviour
         return cam.ScreenToWorldPoint(Input.mousePosition);
     }
 
-    //
+    //method to damgage the player
     public void damage(float damage)
     {
         health -= damage;
@@ -255,6 +265,8 @@ public class Player_Controller : MonoBehaviour
             Die();
         }
     }
+
+    //Overload method to damage the player
     public void damage(float damage, Vector2 direction, float power)
     {
         rigid2d.AddForce(direction * power);
@@ -270,4 +282,18 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
+}
+
+
+//math
+public static class Vector_Math
+{
+
+    //function that converts an angle to a Vector
+    public static Vector2 AngleToVec2(float rotation, float Magnitude)
+    {
+        rotation = Mathf.Deg2Rad * rotation;
+        Vector2 ans = new Vector2(Mathf.Cos(rotation) * Magnitude, Mathf.Sin(rotation) * Magnitude);
+        return ans;
+    }
 }

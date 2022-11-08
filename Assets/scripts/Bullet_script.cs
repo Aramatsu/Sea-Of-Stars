@@ -8,6 +8,7 @@ public class Bullet_script : MonoBehaviour
     [HideInInspector]
     public Player_Controller.Weapon current_weapon;
     public string[] Tags_affected;
+    public SpriteRenderer spriteRenderer;
     private Quaternion rotation;
     private Vector2 direction;
 
@@ -32,11 +33,24 @@ public class Bullet_script : MonoBehaviour
     //sets variables
     public void SetValues(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
     {
+        float rotationOffset = Random.Range(-weapon.Accuracy, weapon.Accuracy);
+
+
         current_weapon = weapon;
-        this.direction = direction.normalized * weapon.Speed;
-        transform.rotation = rotation;
+        this.direction = Vector_Math.AngleToVec2((Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + rotationOffset, 1) * weapon.Speed;
+        transform.rotation = Quaternion.Euler(0, 0, rotation.eulerAngles.z + rotationOffset);
         this.Tags_affected = tags; //all the tags that will be affected by this bullet
-        rb.position = rb.position - (direction * 0.25f);
+        rb.position = rb.position - (direction * 0.05f); 
+
+        //
+        if (Tags_affected[0] == "Player")
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (Tags_affected[0] == "Orange Dwarf")
+        {
+            transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        }
         Player_Controller.Onshot -= SetValues;// remove setvalues to ensure you dont add more values on top of its given ones
     }
 
@@ -50,19 +64,25 @@ public class Bullet_script : MonoBehaviour
                 switch (collision.gameObject.tag)//check specifically which one
                 {
                     case "Player":
-                        collision.gameObject.GetComponent<Player_Controller>().damage(current_weapon.Damage, -direction, 30);
+                        Player_Controller player = collision.gameObject.GetComponent<Player_Controller>();
+                        player.damage(current_weapon.Damage, -direction, 30);
+                        player.rigid2d.AddForce(rb.velocity * 10);
                         gameObject.SetActive(false);
                         break;
                     case "Red Dwarf":
-                        collision.gameObject.GetComponent<Red_Dwarf>().planet.Damage(current_weapon.Damage);
+                        collision.gameObject.GetComponent<Red_Dwarf>().Damage(current_weapon.Damage);
                         gameObject.SetActive(false);
                         break;
                     case "Orange Dwarf":
-                        collision.gameObject.GetComponent<Orange_dwarf_script>().planet.Damage(current_weapon.Damage);
+                        collision.gameObject.GetComponent<Orange_dwarf_script>().Damage(current_weapon.Damage);
                         gameObject.SetActive(false);
                         break;
 
+                    
                 }
+
+                //regardless it should kill itself
+                gameObject.SetActive(false);
             }
         }
 
