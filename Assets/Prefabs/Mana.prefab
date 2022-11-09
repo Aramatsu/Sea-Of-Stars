@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 910415207246227495}
-  speed: 1
+  speed: 2
   movement_damping: 0.25
 --- !u!58 &3862015598952254558
 CircleCollider2D:

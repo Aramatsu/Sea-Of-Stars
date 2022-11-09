@@ -40,16 +40,18 @@ public class Bullet_script : MonoBehaviour
         this.direction = Vector_Math.AngleToVec2((Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + rotationOffset, 1) * weapon.Speed;
         transform.rotation = Quaternion.Euler(0, 0, rotation.eulerAngles.z + rotationOffset);
         this.Tags_affected = tags; //all the tags that will be affected by this bullet
-        rb.position = rb.position - (direction * 0.05f); 
 
         //
-        if (Tags_affected[0] == "Player")
+        if (Tags_affected[0] == "Player") //If the enemy shot the bullet...
         {
             transform.localScale = new Vector3(1, 1, 1);
+            rb.position = rb.position - (direction * 6);
+
         }
-        else if (Tags_affected[0] == "Orange Dwarf")
+        else if (Tags_affected[0] == "Orange Dwarf") //If the player shot the bullet...
         {
             transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            rb.position = rb.position - (direction * 0.05f);
         }
         Player_Controller.Onshot -= SetValues;// remove setvalues to ensure you dont add more values on top of its given ones
     }
@@ -81,9 +83,12 @@ public class Bullet_script : MonoBehaviour
                     
                 }
 
-                //regardless it should kill itself
-                gameObject.SetActive(false);
+
             }
+
+            //regardless it should kill itself
+            gameObject.SetActive(false);
+
         }
 
 

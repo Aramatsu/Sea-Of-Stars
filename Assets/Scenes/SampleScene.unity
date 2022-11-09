@@ -2222,25 +2222,62 @@ MonoBehaviour:
   Enemys:
   - {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
   - {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
-  Wave:
-  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
-    When_to_spawn: 5
-  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
-    When_to_spawn: 2
-  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
-    When_to_spawn: 2
-  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
-    When_to_spawn: 2
-  - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
-    When_to_spawn: 2
-  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
-    When_to_spawn: 3
-  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
-    When_to_spawn: 3
-  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
-    When_to_spawn: 3
-  - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
-    When_to_spawn: 3
+  Waves:
+  - wave:
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 20
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+  - wave:
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 5
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+  - wave:
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 5
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+  - wave:
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 5
+    - Enemy_prefab: {fileID: 2114724565419403772, guid: bbb865e027d710748bc03cb5b39f1f69, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+  - wave:
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 5
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
+    - Enemy_prefab: {fileID: 4939851481612742170, guid: 2de0479cf4457e641bf867ca91ed91a6, type: 3}
+      When_to_spawn: 3
   spawn_area: {fileID: 1658413513}
 --- !u!4 &1409992389
 Transform:

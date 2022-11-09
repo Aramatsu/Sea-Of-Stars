@@ -61,6 +61,8 @@ public class Object_pool : MonoBehaviour
         {
             GameObject clone = Instantiate(Squares, Vector2.zero, Quaternion.identity);
             clone.GetComponent<SpriteRenderer>().sprite = Mana_sprites[Random.Range(0, Mana_sprites.Length)];
+            clone.transform.position = position;
+            clone.transform.localRotation = rotation;
             clone.SetActive(true);
             pool.Add(clone);
             return pool[pool.Count - 1];

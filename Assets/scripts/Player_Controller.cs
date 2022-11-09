@@ -66,11 +66,11 @@ public class Player_Controller : MonoBehaviour
     private float health = 100;
     private float mana = 0;
 
-    private Weapon Staff = new Weapon("Staff", 10, 50, 0.25f, 5, false, false); //the staff weapon
-    private Weapon Machinegun = new Weapon("Machinegun", 5f, 50, 0.125f, 10, false, true); //the Machinegun weapon
-    private Weapon Sniper = new Weapon("Sniper", 25, 70, 0.5f, 0, true, false); //the sniper weapon
+    private Weapon Staff = new Weapon("Staff", 25, 50, 0.25f, 5, false, false); //the staff weapon
+    private Weapon Machinegun = new Weapon("Machinegun", 10, 50, 0.125f, 10, false, true); //the Machinegun weapon
+    private Weapon Sniper = new Weapon("Sniper", 40, 70, 0.5f, 0, true, false); //the sniper weapon
 
-    private Weapon Super_blast = new Weapon("Blast", 10, 50 , 0.5f, 0, true, false); //the Blast super weapon
+    private Weapon Super_blast = new Weapon("Blast", 100, 50 , 0.5f, 0, true, false); //the Blast super weapon
 
     private Weapon Current_weapon;
     private Weapon Current_super;
@@ -240,7 +240,7 @@ public class Player_Controller : MonoBehaviour
         //change this to object pooling later
         GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
         rigid2d.AddForce(-GetMousePos().normalized * 20, ForceMode2D.Impulse);
-        Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos() , Current_weapon, new string[] { "Orange Dwarf", "Red Dwarf" });//send info to the newly made clone
+        Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos() , Current_super, new string[] { "Orange Dwarf", "Red Dwarf" });//send info to the newly made clone
         StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
 

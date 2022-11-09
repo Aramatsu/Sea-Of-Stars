@@ -4,6 +4,9 @@ using System.Collections;
 
 public class EnemySpawner_Script : MonoBehaviour
 {
+    public delegate void Enemy_Delegate();//the delegate that 
+    public static Enemy_Delegate Onkill;
+
     //Enemy types
     [SerializeField] private GameObject[] Enemys;
 
@@ -14,14 +17,19 @@ public class EnemySpawner_Script : MonoBehaviour
         public float When_to_spawn;
     }
 
-    [SerializeField] private Wave_Enemy[] Wave;
-
-    [SerializeField] private Array[] Waves;
+    [Serializable]
+    public struct Wave //A struct containing both the enemy and when it spawns
+    {
+        public Wave_Enemy[] wave;
+    }
+   
+    [SerializeField] private Wave[] Waves;
+    
 
     //variables for enemy spawning
     [SerializeField] private Transform spawn_area;
 
-    private Wave_Enemy current_wave;
+    private int wave_number;
     private int Enemy_num; //number of enemys 
     
 
@@ -29,6 +37,7 @@ public class EnemySpawner_Script : MonoBehaviour
     private void Start()
     {
         StartCoroutine(OnWave());
+        Onkill += Enemy_died;
     }
 
     /**update function
@@ -44,7 +53,18 @@ public class EnemySpawner_Script : MonoBehaviour
         }
     }**/
 
-    
+    private void Enemy_died()
+    {
+        Enemy_num--;
+        if (Enemy_num == 0)
+        {
+            Debug.Log("Wave over!!!");
+            wave_number++;
+            StopCoroutine(OnWave());
+            Debug.Log("Next wave");
+            StartCoroutine(OnWave());
+        }
+    }
 
     private void OnDrawGizmos()
     {
@@ -53,11 +73,24 @@ public class EnemySpawner_Script : MonoBehaviour
 
     IEnumerator OnWave()
     {
-        for (int i = 0; i < Wave.Length; i++)
+        if (wave_number < Waves.Length)
         {
-            yield return new WaitForSeconds(Wave[i].When_to_spawn);
-            Debug.Log("Help");
-            Instantiate(Wave[i].Enemy_prefab, new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);;
+            for (int i = 0; i < Waves[wave_number].wave.Length; i++)
+            {
+                yield return new WaitForSeconds(Waves[wave_number].wave[i].When_to_spawn);
+                Instantiate(Waves[wave_number].wave[i].Enemy_prefab, new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
+                Enemy_num++; //counts the amount of enemys currently present
+            }
+        }
+        else
+        {
+            Debug.Log("No more waves bitch");
+            while (wave_number >= Waves.Length)
+            {
+                yield return new WaitForSeconds(5);
+                Instantiate(Enemys[UnityEngine.Random.Range(0, Enemys.Length)], new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
+            }
+
         }
     }
 }
@@ -121,6 +154,7 @@ public class Enemy : MonoBehaviour
     public void Die(int mana)
     {
         Player_Controller.Onshot -= Shot;
+        EnemySpawner_Script.Onkill();
         for (int i = 0; i < mana; i++)
         {
             current_mana = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_Squares, transform.position + new Vector3(UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(-2, 2), 0), Quaternion.identity);
