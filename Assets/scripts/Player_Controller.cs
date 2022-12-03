@@ -7,7 +7,7 @@ using System;
 
 public class Player_Controller : MonoBehaviour
 {
-    public delegate void Mydelegate(Quaternion rotation, Vector2 direction, Weapon weapon, string[] tags);//the delegate that cotains all the methods for when the player shoots
+    public delegate void Mydelegate(Quaternion rotation, Vector2 direction, Weapon weapon, string[] tags, GameObject whoshot);//the delegate that cotains all the methods for when the player shoots
     public static Mydelegate Onshot;
 
 
@@ -160,7 +160,7 @@ public class Player_Controller : MonoBehaviour
             GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));//makes a bullet
             StartCoroutine(cam_script.Camera_shake(0.1f, 0.025f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
             shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;//reset the timer
-            Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos(),Current_weapon, new string[] {"Orange Dwarf", "Red Dwarf"});//send info to the newly made clone
+            Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos(),Current_weapon, new string[] {"Orange Dwarf", "Red Dwarf"}, gameObject);//send info to the newly made clone
         }
 
         //set animator parameters
@@ -240,7 +240,7 @@ public class Player_Controller : MonoBehaviour
         //change this to object pooling later
         GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
         rigid2d.AddForce(-GetMousePos().normalized * 20, ForceMode2D.Impulse);
-        Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos() , Current_super, new string[] { "Orange Dwarf", "Red Dwarf" });//send info to the newly made clone
+        Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos() , Current_super, new string[] { "Orange Dwarf", "Red Dwarf" }, gameObject);//send info to the newly made clone
         StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
 

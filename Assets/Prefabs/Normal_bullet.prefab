@@ -59,6 +59,7 @@ MonoBehaviour:
     CanPierce: 0
     Repeatable: 0
     Accuracy: 0
+  whoshot: {fileID: 0}
   Tags_affected: []
   spriteRenderer: {fileID: 0}
 --- !u!50 &6089524440582510190

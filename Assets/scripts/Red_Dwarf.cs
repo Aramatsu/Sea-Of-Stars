@@ -4,17 +4,9 @@ using UnityEngine;
 
 public class Red_Dwarf : Red_dwarf
 {
-    
-
-    private void Start()
-    {
-        Player_Controller.Onshot += Shot;
-        MoveToPlanet(transform.position, planet_pos, rb, speed);
-
-    }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         MoveToPlanet(transform.position, planet_pos, rb, speed);
     }

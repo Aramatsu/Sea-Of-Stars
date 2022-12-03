@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 
@@ -21,6 +22,7 @@ public class EnemySpawner_Script : MonoBehaviour
     public struct Wave //A struct containing both the enemy and when it spawns
     {
         public Wave_Enemy[] wave;
+        public float Speed_multiplier;
     }
    
     [SerializeField] private Wave[] Waves;
@@ -60,6 +62,7 @@ public class EnemySpawner_Script : MonoBehaviour
         {
             Debug.Log("Wave over!!!");
             wave_number++;
+            UI_Handler.Set_CurrentWave(wave_number);
             StopCoroutine(OnWave());
             Debug.Log("Next wave");
             StartCoroutine(OnWave());
@@ -101,6 +104,8 @@ public class Enemy : MonoBehaviour
 {
     [Header("References")]
     public Player_Controller.Weapon current_player_weapon;
+    public ParticleSystem ParticleHurt;
+    public Slider HealthBar;
     public Rigidbody2D rb; // the rigidbody of the star
     public Animator anim;// the anim of the star
 
@@ -115,6 +120,15 @@ public class Enemy : MonoBehaviour
     public float speed; // their speed
     public float damage; // the amount of damage they deal to the player 
     public int Mana; // the amount of mana given when killed 
+
+    private void Start()
+    {
+        HealthBar.maxValue = health;
+        HealthBar.value = HealthBar.maxValue;
+        Player_Controller.Onshot += Shot;
+        MoveToPlanet(transform.position, planet_pos, rb, speed);
+
+    }
 
     //function used for when the star touches a trigger
     public void ontriggerenter(Collider2D collision)
@@ -131,6 +145,8 @@ public class Enemy : MonoBehaviour
     public void Damage(float damage)
     {
         health -= damage;
+        HealthBar.value = health;
+        ParticleHurt.Play();
         if (health <= 0)
         {
             Die(Mana); // gio sucks
@@ -139,7 +155,7 @@ public class Enemy : MonoBehaviour
     }
 
     //the function that sets the weapon of the player
-    public void Shot(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
+    public void Shot(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags, GameObject Whoshot)
     {
         current_player_weapon = weapon;
     }
@@ -187,7 +203,7 @@ public class Orange_dwarf : Enemy
     public GameObject Shoot(Quaternion rotation, Vector2 direction)
     {
         GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, rotation);
-        Player_Controller.Onshot(rotation, direction, weapon, new string[] {"Player"});
+        Player_Controller.Onshot(rotation, direction, weapon, new string[] {"Player"}, gameObject);
         return bullet_clone;
     }
 }

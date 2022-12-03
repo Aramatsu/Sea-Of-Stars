@@ -6,17 +6,8 @@ public class Orange_dwarf_script : Orange_dwarf
 {
     private GameObject Current_bullet;
 
-
-    private void Start()
-    {
-        Player_Controller.Onshot += Shot;//add 
-        shoot_timer = Time.realtimeSinceStartup + shoot_timer;
-        MoveToPlanet(transform.position, planet_pos, rb, speed);
-
-    }
-
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (shoot_timer < Time.realtimeSinceStartup)
         {

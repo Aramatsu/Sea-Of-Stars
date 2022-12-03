@@ -7,6 +7,7 @@ public class Bullet_script : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [HideInInspector]
     public Player_Controller.Weapon current_weapon;
+    public GameObject whoshot;
     public string[] Tags_affected;
     public SpriteRenderer spriteRenderer;
     private Quaternion rotation;
@@ -31,11 +32,10 @@ public class Bullet_script : MonoBehaviour
     }
 
     //sets variables
-    public void SetValues(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags)
+    public void SetValues(Quaternion rotation, Vector2 direction, Player_Controller.Weapon weapon, string[] tags, GameObject whoshot)
     {
         float rotationOffset = Random.Range(-weapon.Accuracy, weapon.Accuracy);
-
-
+        this.whoshot = whoshot;
         current_weapon = weapon;
         this.direction = Vector_Math.AngleToVec2((Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + rotationOffset, 1) * weapon.Speed;
         transform.rotation = Quaternion.Euler(0, 0, rotation.eulerAngles.z + rotationOffset);
@@ -45,7 +45,7 @@ public class Bullet_script : MonoBehaviour
         if (Tags_affected[0] == "Player") //If the enemy shot the bullet...
         {
             transform.localScale = new Vector3(1, 1, 1);
-            rb.position = rb.position - (direction * 6);
+            rb.position = rb.position - (direction * 0.25f);
 
         }
         else if (Tags_affected[0] == "Orange Dwarf") //If the player shot the bullet...
@@ -85,12 +85,16 @@ public class Bullet_script : MonoBehaviour
 
 
             }
-
-            //regardless it should kill itself
-            gameObject.SetActive(false);
+            
 
         }
 
+                    //as long as it wasnt what shot it...
+            if (collision.gameObject != whoshot)
+            {
+                //it should kill itself
+                gameObject.SetActive(false);
+            }
 
         //delete the bullet when it touches the border
         if (collision.gameObject.CompareTag("Border"))
