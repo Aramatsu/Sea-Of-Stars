@@ -1,32 +1,70 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI_Handler : MonoBehaviour
 {
-    [SerializeField] private Text Timer;
-    [SerializeField] private Text Wave_counter;
+    public static UI_Handler SharedInstance;
 
-    public static float round_time;
-    public static float current_wave;
-    
-    // Start is called before the first frame update
-    void Start()
+    [System.Serializable] 
+    public struct UIElement
     {
-        round_time = 0; //reset the timer when the round starts
+        public string Name;
+        public GameObject Element;
     }
 
-    // Update is called once per frame
-    void Update()
+    public UIElement[] UIElements;
+
+    public string NextScene;
+
+    [SerializeField] private RectTransform SceneTransition;
+ 
+    private void Awake()
     {
-        round_time += Time.deltaTime;
-        Timer.text = "Time: " + Mathf.RoundToInt(round_time);
-        Wave_counter.text = "Wave: " + (current_wave + 1);
+        SharedInstance = this;
     }
 
-    public static void Set_CurrentWave(int currentwave)
+    public UIElement GetElement(string ElementName)
     {
-        current_wave = currentwave;
+        foreach (UIElement element in UIElements)
+        {
+            if (string.Equals(ElementName, element.Name))
+            {
+                return element;
+                
+            }
+        }
+        Debug.LogWarning("No such UIElement!");
+        return UIElements[0];
     }
+
+    private void Start()
+    {
+        EndSceneTransition();
+    }
+
+    public void EndSceneTransition()
+    {
+        LeanTween.alpha(SceneTransition, 0, 1);
+    }
+
+    public void PlaySceneTransition(string ToScene)
+    {
+        NextScene = ToScene;
+        LeanTween.alpha(SceneTransition, 1, 1).setOnComplete(loadScene);
+    }
+
+    private void loadScene()
+    {
+        SceneManager.LoadScene(NextScene);
+    }
+
+    public void EndGame()
+    {
+        Application.Quit();
+    }
+
+
 }

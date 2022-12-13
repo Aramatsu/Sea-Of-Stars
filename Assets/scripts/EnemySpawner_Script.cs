@@ -5,96 +5,125 @@ using System.Collections;
 
 public class EnemySpawner_Script : MonoBehaviour
 {
+    //WARNING: STUPIDLY MESSY ASS CODE PLS HELP ME I WANNA DIE
     public delegate void Enemy_Delegate();//the delegate that 
     public static Enemy_Delegate Onkill;
 
+    private Slider waveSlider = null;
+    private Text waveText;
+
+    [Serializable]
+    public struct Enemy
+    {
+        public GameObject Prefab;
+        public float Rareness;
+    }
+
     //Enemy types
-    [SerializeField] private GameObject[] Enemys;
-
-    [Serializable]
-    public struct Wave_Enemy //A struct containing both the enemy and when it spawns
-    {
-        public GameObject Enemy_prefab;
-        public float When_to_spawn;
-    }
-
-    [Serializable]
-    public struct Wave //A struct containing both the enemy and when it spawns
-    {
-        public Wave_Enemy[] wave;
-        public float Speed_multiplier;
-    }
-   
-    [SerializeField] private Wave[] Waves;
-    
+    [SerializeField] private Enemy[] Enemys;
 
     //variables for enemy spawning
     [SerializeField] private Transform spawn_area;
 
-    private int wave_number;
+    private int wave_number = 0;
+    [SerializeField]private float _difficultyModifier;
     private int Enemy_num; //number of enemys 
-    
+    private GameObject _enemyType; 
+    private float _enemyWeights; 
+
+    private void Awake()
+    {
+        Onkill += Enemy_died; // on awake add the method that handles when an enemy dies to the onkill delegate
+    }
+
 
     //start function
     private void Start()
     {
-        StartCoroutine(OnWave());
-        Onkill += Enemy_died;
+        waveSlider = UI_Handler.SharedInstance.GetElement("Wave Slider")
+            .Element
+            .GetComponent<Slider>();
+        waveText = UI_Handler.SharedInstance.GetElement("Wave Text")
+            .Element
+            .GetComponent<Text>();
+
+        // start
+        for (int j = 0; j < Enemys.Length; j++)
+        {
+            _enemyWeights += 1 / Enemys[j].Rareness;
+        }
+        StartCoroutine("WaveStart");
     }
 
-    /**update function
-    private void Update()
+    
+    public IEnumerator WaveStart()
     {
-        //once realtime is higher than spawn time plus the delay between each spawn...
-        if(spawn_time + spawn_delay <= Time.realtimeSinceStartup)
+
+        wave_number++; // wave number is used both as a counter as a difficulty level
+        for (int i = 3; i > 0; i--)
         {
-            //instatiate a red_dwarf
-            Instantiate(Enemys[UnityEngine.Random.Range(0, Enemys.Length)],new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
-            //set spawntime to actual time once
-            spawn_time = Time.realtimeSinceStartup;
+            waveText.text = i.ToString();
+            yield return new WaitForSeconds(1);
         }
-    }**/
+        StartCoroutine("OnWave");
+        waveText.text = "Go!";
+        yield return new WaitForSeconds(1);
+        waveText.text = "";
+
+    }
+
+    IEnumerator OnWave()
+    {
+        Enemy_num = Mathf.RoundToInt((wave_number * _difficultyModifier) + 4);
+        for (int i = 0; i < Mathf.RoundToInt((wave_number * _difficultyModifier) + 4); i++)
+        {
+            for (int j = 0; j < Enemys.Length; j++)
+            {
+                if (UnityEngine.Random.Range(0.0f, _enemyWeights) < 1 / Enemys[j].Rareness)
+                {
+                    _enemyType = Enemys[j].Prefab;
+                }
+                else
+                {
+                    _enemyType = Enemys[0].Prefab;
+                }
+            }
+            
+            Instantiate(_enemyType, new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
+            
+            yield return new WaitForSeconds(1);
+        }
+        waveSlider.value = 1f;
+    }
 
     private void Enemy_died()
     {
         Enemy_num--;
+
+        waveSlider.value -= 1.0f / Mathf.RoundToInt((wave_number * _difficultyModifier) + 5);
         if (Enemy_num == 0)
         {
             Debug.Log("Wave over!!!");
-            wave_number++;
-            UI_Handler.Set_CurrentWave(wave_number);
-            StopCoroutine(OnWave());
+            StartCoroutine(WaveOver());
             Debug.Log("Next wave");
-            StartCoroutine(OnWave());
+
         }
+    }
+
+    IEnumerator WaveOver()
+    {
+        wave_number++;
+        for (int i = 0; i < 50; i++)
+        {
+            waveSlider.value = 0.02f * i;
+            yield return new WaitForSeconds(0.1f);
+        }
+        StartCoroutine(WaveStart());
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(new Vector2(-1 * (spawn_area.localScale.x / 2), spawn_area.position.y),new Vector2(spawn_area.localScale.x / 2, spawn_area.position.y));
-    }
-
-    IEnumerator OnWave()
-    {
-        if (wave_number < Waves.Length)
-        {
-            for (int i = 0; i < Waves[wave_number].wave.Length; i++)
-            {
-                yield return new WaitForSeconds(Waves[wave_number].wave[i].When_to_spawn);
-                Instantiate(Waves[wave_number].wave[i].Enemy_prefab, new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
-                Enemy_num++; //counts the amount of enemys currently present
-            }
-        }
-        else
-        {
-            Debug.Log("No more waves bitch");
-            while (wave_number >= Waves.Length)
-            {
-                yield return new WaitForSeconds(5);
-                Instantiate(Enemys[UnityEngine.Random.Range(0, Enemys.Length)], new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
-            }
-
-        }
     }
 }
 
@@ -129,24 +158,13 @@ public class Enemy : MonoBehaviour
         MoveToPlanet(transform.position, planet_pos, rb, speed);
 
     }
-
-    //function used for when the star touches a trigger
-    public void ontriggerenter(Collider2D collision)
-    {
-        switch (collision.tag)
-        {
-            case "Player":
-                Damage(20);
-                break;
-                
-        }
-    }
     //function that hurts the star and does the coresponding other crap
     public void Damage(float damage)
     {
         health -= damage;
         HealthBar.value = health;
         ParticleHurt.Play();
+        AudioManager.audioManager.PlaySound("EnemyHurt");
         if (health <= 0)
         {
             Die(Mana); // gio sucks
@@ -179,6 +197,7 @@ public class Enemy : MonoBehaviour
                 current_mana.GetComponent<Object_script>().Explode(transform.position);
             }
         }
+        AudioManager.audioManager.PlaySound("EnemyDie", 0.5f);
         Destroy(gameObject);
     }
    

@@ -32,10 +32,4 @@ public class Orange_dwarf_script : Orange_dwarf
         
         MoveToPlanet(transform.position, planet_pos, rb, speed);
     }
-
-    //When touching a trigger
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        ontriggerenter(collision);
-    }
 }

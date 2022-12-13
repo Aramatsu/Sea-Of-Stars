@@ -32,8 +32,12 @@ public class Camera_controller : MonoBehaviour
             cam1.orthographicSize = 15;
         }
 
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            StopAllCoroutines();
+        }
+
         //
-        transform.position = new Vector3(Player_position.position.x, Player_position.position.y, -10);
         transform.position = new Vector3(Mathf.Clamp(Player_position.position.x, -101.2f, 100), Mathf.Clamp(Player_position.position.y, -14.3f, 123.2f), -10);
     }
 

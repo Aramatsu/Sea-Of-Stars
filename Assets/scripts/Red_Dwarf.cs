@@ -11,11 +11,5 @@ public class Red_Dwarf : Red_dwarf
         MoveToPlanet(transform.position, planet_pos, rb, speed);
     }
 
-    //when entering a trigger
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        ontriggerenter(collision);
-    }
-
 }
 

@@ -123,8 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 910415207246227495}
-  speed: 2
-  movement_damping: 0.25
+  speed: 50
+  movement_damping: 0.1
 --- !u!58 &3862015598952254558
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: df33eb5b00000000a743a136
+  m_ApplyToSortingLayers: 00000000a743a136
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0

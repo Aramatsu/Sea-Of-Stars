@@ -67,17 +67,31 @@ public class Bullet_script : MonoBehaviour
                 {
                     case "Player":
                         Player_Controller player = collision.gameObject.GetComponent<Player_Controller>();
-                        player.damage(current_weapon.Damage, -direction, 30);
+                        player.damage(current_weapon.Damage, -direction, 100);
                         player.rigid2d.AddForce(rb.velocity * 10);
                         gameObject.SetActive(false);
                         break;
                     case "Red Dwarf":
                         collision.gameObject.GetComponent<Red_Dwarf>().Damage(current_weapon.Damage);
-                        gameObject.SetActive(false);
+                        if (gameObject.CompareTag("Bullet2")) //If the bullet is the big bullet then it will delete itslef rather than disabling itself
+                        {
+                            Destroy(gameObject);
+                        }
+                        else
+                        {
+                            gameObject.SetActive(false);
+                        }
                         break;
                     case "Orange Dwarf":
                         collision.gameObject.GetComponent<Orange_dwarf_script>().Damage(current_weapon.Damage);
-                        gameObject.SetActive(false);
+                        if (gameObject.CompareTag("Bullet2")) //If the bullet is the big bullet then it will delete itslef rather than disabling itself
+                        {
+                            Destroy(gameObject);
+                        }
+                        else
+                        {
+                            gameObject.SetActive(false);
+                        }
                         break;
 
                     
@@ -90,16 +104,31 @@ public class Bullet_script : MonoBehaviour
         }
 
                     //as long as it wasnt what shot it...
-            if (collision.gameObject != whoshot)
+        if (collision.gameObject != whoshot)
+        {
+            //it should kill itself
+            if (gameObject.CompareTag("Bullet2")) //If the bullet is the big bullet then it will delete itslef rather than disabling itself
             {
-                //it should kill itself
+                Destroy(gameObject);
+            }
+            else
+            {
                 gameObject.SetActive(false);
             }
+        }
 
         //delete the bullet when it touches the border
         if (collision.gameObject.CompareTag("Border"))
         {
-            gameObject.SetActive(false);
+            if (gameObject.CompareTag("Bullet2")) //If the bullet is the big bullet then it will delete itslef rather than disabling itself
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+
         }
     }
 

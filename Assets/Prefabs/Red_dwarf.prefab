@@ -60,6 +60,7 @@ MonoBehaviour:
     CanPierce: 0
     Repeatable: 0
     Accuracy: 0
+    Volume: 0
   ParticleHurt: {fileID: 7083316022625268393}
   HealthBar: {fileID: 6056123191269291198}
   rb: {fileID: 8109152380147689352}
@@ -4995,7 +4996,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: df33eb5b00000000a743a136
+  m_ApplyToSortingLayers: 00000000a743a136
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0

@@ -70,6 +70,8 @@ public class Object_pool : MonoBehaviour
         else if (pool[0].CompareTag("Bullet1"))
         {
             GameObject clone = Instantiate(Bullets, Vector2.zero, Quaternion.identity);
+            clone.transform.position = position;
+            clone.transform.localRotation = rotation;
             clone.SetActive(true);
             pool.Add(clone);
             return pool[pool.Count - 1];

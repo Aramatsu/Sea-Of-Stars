@@ -21,6 +21,7 @@ public class Player_Controller : MonoBehaviour
         public bool CanPierce;
         public bool Repeatable;
         public float Accuracy;
+        public float Volume;
         public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable)//weapon constructor
         {
             this.Damage = damage;
@@ -30,14 +31,26 @@ public class Player_Controller : MonoBehaviour
             this.Cooldown = cooldown;
             this.Repeatable = repeatable;
             this.Accuracy = Accuracy;
+            Volume = 1;
             
+        }
+
+        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable, float volume)//weapon constructor
+        {
+            Damage = damage;
+            Speed = speed;
+            Name = name;
+            this.CanPierce = CanPierce;
+            Cooldown = cooldown;
+            Repeatable = repeatable;
+            this.Accuracy = Accuracy;
+            Volume = volume;
         }
     }
 
     [Header("References")]
     [SerializeField] private Camera cam; //camera
     public Rigidbody2D rigid2d; //the rigidbody of this object, its public because other things need to access it
-    [SerializeField] private Collider2D collider2d;
     [SerializeField] public static Transform player_transform; //putting the transform here because it saves al ittle on efficiency
     [SerializeField] private Animator player_anim; //the animator of the player
     [SerializeField] private Slider Health_bar; //the health bar the health is connected to
@@ -66,9 +79,9 @@ public class Player_Controller : MonoBehaviour
     private float health = 100;
     private float mana = 0;
 
-    private Weapon Staff = new Weapon("Staff", 25, 50, 0.25f, 5, false, false); //the staff weapon
-    private Weapon Machinegun = new Weapon("Machinegun", 10, 50, 0.125f, 10, false, true); //the Machinegun weapon
-    private Weapon Sniper = new Weapon("Sniper", 40, 70, 0.5f, 0, true, false); //the sniper weapon
+    private Weapon Staff = new Weapon("Staff", 25, 50, 0.25f, 5, false, false, 0.5f); //the staff weapon
+    private Weapon Machinegun = new Weapon("Machinegun", 10, 50, 0.125f, 10, false, true, 0.25f); //the Machinegun weapon
+    private Weapon Sniper = new Weapon("Sniper", 40, 70, 0.5f, 0, true, false, 1); //the sniper weapon
 
     private Weapon Super_blast = new Weapon("Blast", 100, 50 , 0.5f, 0, true, false); //the Blast super weapon
 
@@ -104,16 +117,22 @@ public class Player_Controller : MonoBehaviour
         target_velocity = new Vector3(horimove, vertmove) * speed;
         rigid2d.velocity = Vector2.SmoothDamp(rigid2d.velocity, target_velocity, ref velocity, movement_damping);
 
-        //super attack
-        if (Input.GetMouseButton(1) && mana >= 20 && super_timer <= Time.realtimeSinceStartup)
+        //if the horizontal input is positive...
+        if (horimove > 0)
         {
-            super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
-            UpdateMana(-20);
-            player_anim.SetTrigger("Shot_M2");
-            AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-            Invoke("OnM2", hi.Length - 0.5f);
+            //flip the player
+            gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 180));
+        }
+        else if (horimove < 0) //and if not...
+        {
+            //keep them at default
+            gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 0));
 
         }
+
+        //set animator parameters
+        player_anim.SetFloat("speed", MathF.Abs(horimove) + Mathf.Abs(vertmove));
+
 
         //switch weapons with tab
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -136,22 +155,14 @@ public class Player_Controller : MonoBehaviour
             Debug.Log(Current_weapon.Name);
         }
 
+        
+
         //Dash when tapping space
         if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer <= Time.realtimeSinceStartup|| Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer <= Time.realtimeSinceStartup)
         {
-            collider2d.isTrigger = true;
             Dash();
             dash_timer = Time.realtimeSinceStartup + 0.3f;
             rigid2d.AddForce(new Vector3(horimove, vertmove) * dash_speed);
-        }
-
-        if (MathF.Abs(rigid2d.velocity.x) > 21 || MathF.Abs(rigid2d.velocity.y) > 21)
-        {
-            collider2d.isTrigger = true;
-        } 
-        else
-        {
-            collider2d.isTrigger = false;
         }
 
         //Shoot with mouse
@@ -161,23 +172,27 @@ public class Player_Controller : MonoBehaviour
             StartCoroutine(cam_script.Camera_shake(0.1f, 0.025f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
             shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;//reset the timer
             Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos(),Current_weapon, new string[] {"Orange Dwarf", "Red Dwarf"}, gameObject);//send info to the newly made clone
+            AudioManager.audioManager.PlaySound("PlayerShoot", Current_weapon.Volume);
         }
 
-        //set animator parameters
-        player_anim.SetFloat("speed", MathF.Abs(horimove) + Mathf.Abs(vertmove));
-
-        //if the horizontal input is positive...
-        if (horimove > 0)
+        //super attack
+        if (Input.GetMouseButton(1) && mana >= 20 && super_timer <= Time.realtimeSinceStartup)
         {
-            //flip the player
-            gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 180));
-        }
-        else if(horimove < 0) //and if not...
-        {
-            //keep them at default
-            gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 0));
+            super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
+            UpdateMana(-20);
+            player_anim.SetTrigger("Shot_M2");
+            AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
+            Invoke("OnM2", hi.Length - 0.5f);
 
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StopAllCoroutines();
+            Pause();     
+        }
+
+
     }
 
 
@@ -198,7 +213,7 @@ public class Player_Controller : MonoBehaviour
     //the method that defines the death of the player
     public void Die()
     {
-        SceneManager.LoadScene("Death_screen");
+        UI_Handler.SharedInstance.PlaySceneTransition("SampleScene");
     }
 
     //When colliding with something
@@ -223,6 +238,7 @@ public class Player_Controller : MonoBehaviour
                 UpdateMana(1);
 
             }
+            AudioManager.audioManager.PlaySound("PlayerPickup");
             collision.gameObject.SetActive(false);
         }
     }
@@ -238,8 +254,9 @@ public class Player_Controller : MonoBehaviour
     private void OnM2()
     {
         //change this to object pooling later
+        AudioManager.audioManager.PlaySound("Explosion");
         GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
-        rigid2d.AddForce(-GetMousePos().normalized * 20, ForceMode2D.Impulse);
+        rigid2d.AddForce(-GetMousePos().normalized * 50, ForceMode2D.Impulse);
         Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos() , Current_super, new string[] { "Orange Dwarf", "Red Dwarf" }, gameObject);//send info to the newly made clone
         StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
@@ -254,6 +271,7 @@ public class Player_Controller : MonoBehaviour
     //method to damgage the player
     public void damage(float damage)
     {
+        AudioManager.audioManager.PlaySound("PlayerHurt");
         health -= damage;
         if (health > 0)
         {
@@ -280,6 +298,20 @@ public class Player_Controller : MonoBehaviour
         {
             Die();
         }
+    }
+
+    //function that defines what happens when the player pauses the game, not entirely sure why im defining it here though but oh well
+    private void Pause()
+    {
+
+        Time.timeScale = 0;
+
+        LeanTween.moveY(
+            UI_Handler.SharedInstance.GetElement("Pause Panel")
+                .Element
+                .GetComponent<RectTransform>()
+            , 0
+            , 0.5f);
     }
 
 }

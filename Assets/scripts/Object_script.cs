@@ -22,7 +22,7 @@ public class Object_script : MonoBehaviour
     //
     private void Update()
     {
-        target_velocity = -(transform.position - player_transform.position) * speed;
+        target_velocity = (player_transform.position - transform.position) * (speed * Mathf.Clamp(1 / (player_transform.position - transform.position).magnitude, 0.1f, Mathf.Infinity));
         rb.velocity = Vector2.SmoothDamp(rb.velocity, target_velocity, ref velocity, movement_damping);
     }
 
