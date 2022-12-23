@@ -7,8 +7,14 @@ using System;
 
 public class Player_Controller : MonoBehaviour
 {
-    public delegate void Mydelegate(Quaternion rotation, Vector2 direction, Weapon weapon, string[] tags, GameObject whoshot);//the delegate that cotains all the methods for when the player shoots
-    public static Mydelegate Onshot;
+    public delegate void ShootDelegate(Quaternion rotation, Vector2 direction, Weapon weapon, string[] tags, GameObject whoshot);//the delegate that cotains all the methods for when the player shoots
+    public static ShootDelegate Onshot;
+
+    //the delegate that cotains all the parameters for when the player uses their super
+    public delegate void SuperDelegate(Transform transform);
+    public static SuperDelegate OnSuper;
+
+
 
 
     [Serializable]
@@ -18,11 +24,13 @@ public class Player_Controller : MonoBehaviour
         public float Damage;
         public float Speed;
         public float Cooldown;
+        public float Accuracy;
+        public float AudioVolume;
+        public int ManaCost;
         public bool CanPierce;
         public bool Repeatable;
-        public float Accuracy;
-        public float Volume;
-        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable)//weapon constructor
+
+        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy,int ManaCost, bool CanPierce, bool repeatable)//weapon constructor default
         {
             this.Damage = damage;
             this.Speed = speed;
@@ -31,11 +39,26 @@ public class Player_Controller : MonoBehaviour
             this.Cooldown = cooldown;
             this.Repeatable = repeatable;
             this.Accuracy = Accuracy;
-            Volume = 1;
+            this.ManaCost = ManaCost;
+            AudioVolume = 1;
             
         }
 
-        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable, float volume)//weapon constructor
+        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable)//weapon constructor default
+        {
+            this.Damage = damage;
+            this.Speed = speed;
+            this.Name = name;
+            this.CanPierce = CanPierce;
+            this.Cooldown = cooldown;
+            this.Repeatable = repeatable;
+            this.Accuracy = Accuracy;
+            this.ManaCost = 0;
+            AudioVolume = 1;
+
+        }
+
+        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, int ManaCost, bool CanPierce, bool repeatable, float volume)//weapon constructor overload with control over volume
         {
             Damage = damage;
             Speed = speed;
@@ -44,7 +67,47 @@ public class Player_Controller : MonoBehaviour
             Cooldown = cooldown;
             Repeatable = repeatable;
             this.Accuracy = Accuracy;
-            Volume = volume;
+            this.ManaCost = ManaCost;
+            AudioVolume = volume;
+        }
+
+        public Weapon(string name, float damage, float speed, float cooldown, float Accuracy, bool CanPierce, bool repeatable, float volume)//weapon constructor overload with control over volume
+        {
+            Damage = damage;
+            Speed = speed;
+            Name = name;
+            this.CanPierce = CanPierce;
+            Cooldown = cooldown;
+            Repeatable = repeatable;
+            this.Accuracy = Accuracy;
+            this.ManaCost = 0;
+            AudioVolume = volume;
+        }
+
+        public Weapon(string name)//weapon constructor overload name
+        {
+            Damage = 0;
+            Speed = 0;
+            this.ManaCost = 0;
+            Name = name;
+            this.CanPierce = false;
+            Cooldown = 0;
+            Repeatable = false;
+            this.Accuracy = 0;
+            AudioVolume = 1;
+        }
+
+        public Weapon(string name, float Cooldown)//weapon constructor overload name
+        {
+            Damage = 0;
+            Speed = 0;
+            this.ManaCost = 0;
+            Name = name;
+            this.CanPierce = false;
+            this.Cooldown = Cooldown;
+            Repeatable = false;
+            this.Accuracy = 0;
+            AudioVolume = 1;
         }
     }
 
@@ -84,18 +147,18 @@ public class Player_Controller : MonoBehaviour
     private Weapon Sniper = new Weapon("Sniper", 40, 70, 0.5f, 0, true, false, 1); //the sniper weapon
 
     private Weapon Super_blast = new Weapon("Blast", 100, 50 , 0.5f, 0, true, false); //the Blast super weapon
+    private Weapon Super_control = new Weapon("Control", 0.5f); //the Control super weapon
 
     private Weapon Current_weapon;
     private Weapon Current_super;
 
-    //awake function
     private void Awake()
     {
         Current_weapon = Staff;
+        OnSuper += Blast;
         player_transform = transform;
     }
 
-    //start yay
     private void Start()
     {
         Current_super = Super_blast;
@@ -117,115 +180,110 @@ public class Player_Controller : MonoBehaviour
         target_velocity = new Vector3(horimove, vertmove) * speed;
         rigid2d.velocity = Vector2.SmoothDamp(rigid2d.velocity, target_velocity, ref velocity, movement_damping);
 
-        //if the horizontal input is positive...
-        if (horimove > 0)
+
+
+
+
+
+        if (!UI_Handler.IsPaused) // Only take input when is paused equal to false
         {
-            //flip the player
-            gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 180));
-        }
-        else if (horimove < 0) //and if not...
-        {
-            //keep them at default
-            gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 0));
+            //set animator parameters
+            player_anim.SetFloat("speed", MathF.Abs(horimove) + Mathf.Abs(vertmove));
 
-        }
-
-        //set animator parameters
-        player_anim.SetFloat("speed", MathF.Abs(horimove) + Mathf.Abs(vertmove));
-
-
-        //switch weapons with tab
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            switch (Current_weapon.Name)
+            //if the horizontal input is positive...
+            if (horimove > 0)
             {
-                case "Staff":
-                    Current_weapon = Machinegun;
-                    break;
-                case "Machinegun":
-                    Current_weapon = Sniper;
-                    break;
-                case "Sniper":
-                    Current_weapon = Staff;
-                    break;
-                default:
-                    Current_weapon = Staff;
-                    break;
+                //flip the player
+                gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 180));
             }
-            Debug.Log(Current_weapon.Name);
-        }
+            else if (horimove < 0) //and if not...
+            {
+                //keep them at default
+                gfx.transform.rotation = Quaternion.Euler(new Vector2(0, 0));
 
-        
+            }
+          
+            //switch weapons with tab
+            if (Input.GetKeyDown(KeyCode.Tab) && !Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                switch (Current_weapon.Name)
+                {
+                    case "Staff":
+                        Current_weapon = Machinegun;
+                        break;
+                    case "Machinegun":
+                        Current_weapon = Sniper;
+                        break;
+                    case "Sniper":
+                        Current_weapon = Staff;
+                        break;
+                    default:
+                        Current_weapon = Staff;
+                        break;
+                }
+                Debug.Log(Current_weapon.Name);
+            }
 
-        //Dash when tapping space
-        if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer <= Time.realtimeSinceStartup|| Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer <= Time.realtimeSinceStartup)
-        {
-            Dash();
-            dash_timer = Time.realtimeSinceStartup + 0.3f;
-            rigid2d.AddForce(new Vector3(horimove, vertmove) * dash_speed);
-        }
+            //switch Supers with tab
+            if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                switch (Current_super.Name)
+                {
+                    case "Blast":
+                        OnSuper -= Blast;
+                        OnSuper += Control;
+                        break;
+                    case "Control":
+                        OnSuper -= Control;
+                        OnSuper += Blast;
+                        break;
+                    default:
+                        Current_super = Super_blast;
+                        break;
+                }
+                Debug.Log(Current_super.Name);
+            }
 
-        //Shoot with mouse
-        if (Input.GetMouseButtonDown(0) && shooting_timer <= Time.realtimeSinceStartup && !Current_weapon.Repeatable || Input.GetMouseButton(0) && Current_weapon.Repeatable && shooting_timer <= Time.realtimeSinceStartup)
-        {
-            GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));//makes a bullet
-            StartCoroutine(cam_script.Camera_shake(0.1f, 0.025f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
-            shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;//reset the timer
-            Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos(),Current_weapon, new string[] {"Orange Dwarf", "Red Dwarf"}, gameObject);//send info to the newly made clone
-            AudioManager.audioManager.PlaySound("PlayerShoot", Current_weapon.Volume);
-        }
 
-        //super attack
-        if (Input.GetMouseButton(1) && mana >= 20 && super_timer <= Time.realtimeSinceStartup)
-        {
-            super_timer = Time.realtimeSinceStartup + Current_super.Cooldown;
-            UpdateMana(-20);
-            player_anim.SetTrigger("Shot_M2");
-            AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
-            Invoke("OnM2", hi.Length - 0.5f);
 
+
+            //Dash when tapping space
+            if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2d.velocity.x) > 1 && dash_timer <= Time.realtimeSinceStartup || Mathf.Abs(rigid2d.velocity.y) > 1 && Input.GetKeyDown(KeyCode.Space) && dash_timer <= Time.realtimeSinceStartup)
+            {
+                Dash();
+                dash_timer = Time.realtimeSinceStartup + 0.3f;
+                rigid2d.AddForce(new Vector3(horimove, vertmove) * dash_speed);
+            }
+
+            //Shoot with mouse
+            if (Input.GetMouseButtonDown(0) && shooting_timer <= Time.realtimeSinceStartup && !Current_weapon.Repeatable || Input.GetMouseButton(0) && Current_weapon.Repeatable && shooting_timer <= Time.realtimeSinceStartup)
+            {
+                GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));//makes a bullet
+                StartCoroutine(cam_script.Camera_shake(0.1f, 0.025f * Current_weapon.Damage)); // multiply the magnitude to damage to add more oomph to the more powerful weapons
+                shooting_timer = Time.realtimeSinceStartup + Current_weapon.Cooldown;//reset the timer
+                Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Current_weapon, new string[] { "Orange Dwarf", "Red Dwarf", "Meteor", "Comet" }, gameObject);//send info to the newly made clone
+                AudioManager.audioManager.PlaySound("PlayerShoot", Current_weapon.AudioVolume);
+            }
+
+            //super attack
+            if (Input.GetMouseButton(1))
+            {
+                OnSuper(transform);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             StopAllCoroutines();
-            Pause();     
+            UI_Handler.Pause();
         }
 
 
     }
 
 
-    //function to find the distance of two vectors and return a vector
-    private Vector2 V2_distance(Vector2 a, Vector2 b)
-    {
-        Vector2 final = (a - b);
-        return final;
-    }
 
-    //function to handle dashing
-    public void Dash()
-    {
-        GameObject dash_clone = Instantiate(dash, new Vector2(1000, 1000), Quaternion.identity);
-        dash_clone.GetComponent<Dash_script>().Dash(transform, rigid2d);
-    }
-    
-    //the method that defines the death of the player
-    public void Die()
-    {
-        UI_Handler.SharedInstance.PlaySceneTransition("SampleScene");
-    }
 
-    //When colliding with something
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //check tag if its the red dwarf
-        if (collision.gameObject.CompareTag("Red Dwarf"))
-        {
-            rigid2d.AddForce(-(rigid2d.velocity.normalized * 10)); 
-            damage(5);
-        }
-    }
 
     //when entering a trigger
     private void OnTriggerEnter2D(Collider2D collision)
@@ -243,32 +301,35 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    //method to update the mana amount
+    public void Blast(Transform transform)
+    {
+        if (mana >= 20 && super_timer <= Time.realtimeSinceStartup) 
+        {
+            super_timer = Time.realtimeSinceStartup + Super_blast.Cooldown;
+            UpdateMana(-20);
+            player_anim.SetTrigger("Shot_M2");
+            AnimatorClipInfo[] hi = player_anim.GetCurrentAnimatorClipInfo(0);//gets the  anim clip
+            Invoke("OnM2", hi.Length - 0.5f);
+        }
+    }
+
+    public void Control(Transform transform)
+    {
+
+    }
+
+    #region Methods
+    public void Die()
+    {
+        UI_Handler.SharedInstance.PlaySceneTransition("SampleScene");
+    }
+
     private void UpdateMana(float amount)
     {
         mana += amount;
         Mana_bar.value = mana;
     }
 
-    //Called when using the special attack
-    private void OnM2()
-    {
-        //change this to object pooling later
-        AudioManager.audioManager.PlaySound("Explosion");
-        GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
-        rigid2d.AddForce(-GetMousePos().normalized * 50, ForceMode2D.Impulse);
-        Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos() , Current_super, new string[] { "Orange Dwarf", "Red Dwarf" }, gameObject);//send info to the newly made clone
-        StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
-    }
-
-    //function to get the position of the mouse
-    private Vector2 GetMousePos()
-    {
-        //find mouse position in relation to world point
-        return cam.ScreenToWorldPoint(Input.mousePosition);
-    }
-
-    //method to damgage the player
     public void damage(float damage)
     {
         AudioManager.audioManager.PlaySound("PlayerHurt");
@@ -300,20 +361,28 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    //function that defines what happens when the player pauses the game, not entirely sure why im defining it here though but oh well
-    private void Pause()
+    //Called when using the special attack
+    private void OnM2()
     {
-
-        Time.timeScale = 0;
-
-        LeanTween.moveY(
-            UI_Handler.SharedInstance.GetElement("Pause Panel")
-                .Element
-                .GetComponent<RectTransform>()
-            , 0
-            , 0.5f);
+        GameObject bullet_clone = Instantiate(bullet, transform.position, Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))));
+        AudioManager.audioManager.PlaySound("Explosion");
+        rigid2d.AddForce(-GetMousePos().normalized * 50, ForceMode2D.Impulse);
+        Onshot(Quaternion.Euler(new Vector3(0, 0, 180 + Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - GetMousePos().y, transform.position.x - GetMousePos().x))), new Vector2(transform.position.x, transform.position.y) - GetMousePos(), Super_blast, new string[] { "Orange Dwarf", "Red Dwarf" }, gameObject);//send info to the newly made clone
+        StartCoroutine(cam_script.Camera_shake(0.3f, 0.1f));
     }
 
+    public void Dash()
+    {
+        GameObject dash_clone = Instantiate(dash, new Vector2(1000, 1000), Quaternion.identity);
+        dash_clone.GetComponent<Dash_script>().Dash(transform, rigid2d);
+    }
+
+    private Vector2 GetMousePos()
+    {
+        //find mouse position in relation to world point
+        return cam.ScreenToWorldPoint(Input.mousePosition);
+    }
+    #endregion
 }
 
 

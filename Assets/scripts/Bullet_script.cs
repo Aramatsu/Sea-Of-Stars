@@ -39,7 +39,7 @@ public class Bullet_script : MonoBehaviour
         current_weapon = weapon;
         this.direction = Vector_Math.AngleToVec2((Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + rotationOffset, 1) * weapon.Speed;
         transform.rotation = Quaternion.Euler(0, 0, rotation.eulerAngles.z + rotationOffset);
-        this.Tags_affected = tags; //all the tags that will be affected by this bullet
+        Tags_affected = tags; //all the tags that will be affected by this bullet
 
         //
         if (Tags_affected[0] == "Player") //If the enemy shot the bullet...
@@ -93,8 +93,30 @@ public class Bullet_script : MonoBehaviour
                             gameObject.SetActive(false);
                         }
                         break;
+                    case "Meteor":
+                        collision.gameObject.GetComponent<Meteor_Script>().Damage(current_weapon.Damage);
+                        if (gameObject.CompareTag("Bullet2")) //If the bullet is the big bullet then it will delete itslef rather than disabling itself
+                        {
+                            Destroy(gameObject);
+                        }
+                        else
+                        {
+                            gameObject.SetActive(false);
+                        }
+                        break;
+                    case "Comet":
+                        collision.gameObject.GetComponent<Comet_script>().Damage(current_weapon.Damage);
+                        if (gameObject.CompareTag("Bullet2")) //If the bullet is the big bullet then it will delete itslef rather than disabling itself
+                        {
+                            Destroy(gameObject);
+                        }
+                        else
+                        {
+                            gameObject.SetActive(false);
+                        }
+                        break;
 
-                    
+
                 }
 
 

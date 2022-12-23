@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Red_Dwarf : Red_dwarf
+public class Red_Dwarf : Enemy
 {
 
     // Update is called once per frame

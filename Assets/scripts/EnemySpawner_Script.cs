@@ -27,6 +27,7 @@ public class EnemySpawner_Script : MonoBehaviour
 
     private int wave_number = 0;
     [SerializeField]private float _difficultyModifier;
+    [SerializeField]private float _spawningSpeed;
     private int Enemy_num; //number of enemys 
     private GameObject _enemyType; 
     private float _enemyWeights; 
@@ -91,7 +92,7 @@ public class EnemySpawner_Script : MonoBehaviour
             
             Instantiate(_enemyType, new Vector2(spawn_area.position.x + UnityEngine.Random.Range(-1 * (spawn_area.localScale.x / 2), spawn_area.localScale.x / 2), spawn_area.position.y), Quaternion.identity);
             
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(_spawningSpeed);
         }
         waveSlider.value = 1f;
     }
@@ -127,6 +128,7 @@ public class EnemySpawner_Script : MonoBehaviour
     }
 }
 
+#region Enemy Code
 
 //The main class of all enemies
 public class Enemy : MonoBehaviour
@@ -149,6 +151,13 @@ public class Enemy : MonoBehaviour
     public float speed; // their speed
     public float damage; // the amount of damage they deal to the player 
     public int Mana; // the amount of mana given when killed 
+
+    public static Transform PlayerTransform;
+
+    private void Awake()
+    {
+        PlayerTransform = Physics2D.CircleCast(transform.position, Mathf.Infinity, Vector2.zero, Mathf.Infinity, (1 << 10)).transform;
+    }
 
     private void Start()
     {
@@ -181,7 +190,7 @@ public class Enemy : MonoBehaviour
     // function that moves the star toward the planet
     public void MoveToPlanet(Vector2 r_pos, Vector2 p_pos, Rigidbody2D rb2D, float speed)
     {
-        rb2D.AddForce((p_pos - r_pos) * speed, ForceMode2D.Force);
+        rb2D.AddForce(Vector2.down * speed, ForceMode2D.Force);
     }
     
     //the function that used to kill the star
@@ -200,29 +209,13 @@ public class Enemy : MonoBehaviour
         AudioManager.audioManager.PlaySound("EnemyDie", 0.5f);
         Destroy(gameObject);
     }
-   
 
-}
-
-//the class of red_dwarfs
-public class Red_dwarf : Enemy
-{
-     
-}
-
-//the class of orange_dwarfs
-public class Orange_dwarf : Enemy
-{
-    //variables
-    Player_Controller.Weapon weapon = new Player_Controller.Weapon("Orange Dwarf", 25, 30, 5, 0, false, false);
-    public float shoot_timer = 2;
-    public float bullet_offset = 0;
-
-    //method that creates bullets via the the object pool and then sets its direction
-    public GameObject Shoot(Quaternion rotation, Vector2 direction)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        GameObject bullet_clone = Object_pool.Shared_instance.Create(Object_pool.Shared_instance.Pooled_bullets, transform.position, rotation);
-        Player_Controller.Onshot(rotation, direction, weapon, new string[] {"Player"}, gameObject);
-        return bullet_clone;
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.GetComponent<Player_Controller>().damage(damage);
+        }
     }
 }
+#endregion
